@@ -5,18 +5,16 @@
 /* ---- Glass Card ---- */
 .card {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  padding: var(--space-4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all var(--duration-normal) var(--ease-out);
 }
 
 .card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-default);
-  box-shadow: var(--shadow-lg);
+  border-color: var(--border-strong);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .card-interactive {
@@ -24,17 +22,17 @@
 }
 
 .card-interactive:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .card-accent {
-  border-color: rgba(0, 201, 167, 0.2);
-  box-shadow: var(--shadow-glow-accent);
+  border-color: rgba(15, 76, 129, 0.2);
+  box-shadow: 0 4px 12px rgba(15, 76, 129, 0.05);
 }
 
 .card-accent:hover {
-  border-color: rgba(0, 201, 167, 0.35);
+  border-color: rgba(15, 76, 129, 0.35);
 }
 
 /* ---- Buttons ---- */

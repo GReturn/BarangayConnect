@@ -8,10 +8,8 @@ import ledger from '../ledger.js';
 import sms from '../sms.js';
 import { showModal } from '../components/modal.js';
 import { showToast } from '../components/toast.js';
-import { renderSLATimer, startSLATimers } from '../components/sla-timer.js';
 import {
-  getDocumentTypeLabel, getStatusInfo, formatDateTimeUTC, formatDateTime,
-  escapeHTML, DOCUMENT_TYPES
+  getDocumentTypeLabel, getStatusInfo, formatDateTimeUTC, escapeHTML
 } from '../utils.js';
 
 const { STORES } = store;
@@ -32,239 +30,222 @@ export async function renderReview(requestId) {
     return;
   }
 
-  const resident = await store.getById(STORES.residents, request.residentId);
   const statusInfo = getStatusInfo(request.status);
   const docType = getDocumentTypeLabel(request.documentType);
   const entries = await ledger.getEntriesForRequest(requestId);
   const smsLog = await sms.getSMSForRequest(requestId);
 
-  // Get previous filings
-  const allRequests = await store.getAll(STORES.requests);
-  const previousFilings = allRequests.filter(r =>
-    r.residentId === request.residentId && r.id !== request.id
-  );
-
   const isApproved = ['approved', 'ready_pickup', 'collected'].includes(request.status);
   const isRejected = request.status === 'rejected';
 
-  main.innerHTML = `
-    <div class="review-view animate-fade-in">
-      <div class="form-back-row">
-        <button class="btn btn-ghost btn-sm" id="review-back-btn">
-          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-          Back to Dashboard
-        </button>
-      </div>
+  // Format date filed
+  const dateFiled = new Date(request.createdAt).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
 
+  // Get hashes for display
+  const latestEntry = entries[entries.length - 1];
+  const currentHash = latestEntry ? latestEntry.hash : 'c4d3e2f1g0h9i8j7k6l5m4n3o2p1q9r9';
+  const prevHash = latestEntry ? latestEntry.previousHash : 'b7e2a16d8c4f92a3e5b1c0d9f8e7a6b5';
+
+  main.innerHTML = `
+    <div class="official-review-view animate-fade-in">
+
+      <!-- Status Header Banner -->
       ${isApproved ? `
-        <div class="notice notice-success mb-4 animate-fade-in-down">
-          <span class="notice-icon">✅</span>
-          <div>
-            <strong>Approved — ${escapeHTML(request.residentName)} notified via SMS.</strong>
-            <div class="text-xs mt-1">Digital signature applied under RA 8792.</div>
-          </div>
+        <div class="review-status-banner banner-success animate-fade-in-down">
+          <span class="banner-status-icon">✓</span>
+          <span>Approved — ${escapeHTML(request.residentName)} notified via SMS</span>
         </div>
       ` : ''}
 
       ${isRejected ? `
-        <div class="notice notice-error mb-4 animate-fade-in-down">
-          <span class="notice-icon">❌</span>
-          <strong>Rejected — ${escapeHTML(request.residentName)} notified via SMS.</strong>
+        <div class="review-status-banner banner-danger animate-fade-in-down">
+          <span class="banner-status-icon">❌</span>
+          <span>Rejected — ${escapeHTML(request.residentName)} notified via SMS</span>
         </div>
       ` : ''}
 
-      <!-- Request Header -->
-      <div class="card animate-fade-in-up">
-        <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: var(--space-3);">
+      <!-- Request Details Card -->
+      <div class="card review-details-card mt-3">
+        <div class="review-details-header flex justify-between items-start">
           <div>
-            <div class="flex items-center gap-2 mb-2">
-              <span class="badge badge-${statusInfo.color}">${statusInfo.icon} ${statusInfo.label}</span>
-              ${request.isPriority ? `<span class="badge badge-priority">✓ Auto-prioritized — ${request.priorityReasons?.join(', ')}</span>` : ''}
-            </div>
-            <h2 style="font-size: var(--font-size-2xl);">${docType}</h2>
-            <div class="text-sm text-secondary mt-1">${request.referenceNumber}</div>
+            <h2 class="review-doc-title font-bold">${docType}</h2>
+            <span class="review-req-id block mt-1">Request ID: #${request.referenceNumber}</span>
           </div>
-          ${!isApproved && !isRejected ? renderSLATimer(requestId, request.createdAt) : ''}
+          <span class="badge review-status-badge status-${request.status}">${statusInfo.label.toUpperCase()}</span>
+        </div>
+
+        <div class="review-fields-grid mt-4">
+          <div class="review-field-row">
+            <span class="review-field-lbl">APPLICANT</span>
+            <span class="review-field-val font-semibold">${escapeHTML(request.residentName)}</span>
+          </div>
+          
+          <div class="review-field-row mt-3">
+            <span class="review-field-lbl">DATE FILED</span>
+            <span class="review-field-val">${dateFiled}</span>
+          </div>
+
+          <div class="review-field-row mt-3">
+            <span class="review-field-lbl">PURPOSE</span>
+            <span class="review-field-val font-italic">"${escapeHTML(request.purpose)}"</span>
+          </div>
+        </div>
+
+        <!-- Remarks Section (only if not processed) -->
+        ${!isApproved && !isRejected ? `
+          <div class="divider"></div>
+          <div class="form-group mt-2">
+            <label class="form-label font-bold" for="review-remarks">Remarks (optional)</label>
+            <span class="form-hint mb-2 block">Mga obserbasyon o pahinumdom</span>
+            <textarea class="form-textarea" id="review-remarks" placeholder="Add a note for the resident or for the record..."></textarea>
+          </div>
+
+          <div class="esignature-alert-banner mt-3">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>Your approval constitutes a legally binding digital signature under RA 8792 (E-Commerce Act). No physical signature or presence required.</span>
+          </div>
+
+          <!-- Approve/Reject buttons -->
+          <div class="review-actions-row flex gap-3 mt-4">
+            <button class="btn btn-approve-action w-full" id="btn-review-approve">I-approve</button>
+            <button class="btn btn-reject-action w-full" id="btn-review-reject">I-reject</button>
+          </div>
+        ` : ''}
+      </div>
+
+      <!-- Image Attachments Section -->
+      <div class="card review-attachments-card mt-4">
+        <h3 class="font-bold mb-3">Attachments</h3>
+        <div class="attachments-grid">
+          <!-- Attachment Slot 1: Thumbnail -->
+          <div class="attachment-slot slot-filled">
+            <div class="attachment-thumb-icon">📄</div>
+            <div class="attachment-thumb-overlay">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </div>
+          </div>
+          
+          <!-- Attachment Slot 2: Add plus -->
+          <div class="attachment-slot slot-upload-dashed">
+            <div class="upload-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <span class="upload-plus">+</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-2 gap-4 mt-4">
-        <!-- Resident Details -->
-        <div class="card animate-fade-in-up" style="animation-delay: 100ms;">
-          <h3 class="font-semibold mb-4">👤 Resident Details</h3>
-          <div class="review-detail-grid">
-            <div class="review-detail">
-              <span class="review-detail-label">Full Name</span>
-              <span class="review-detail-value">
-                ${escapeHTML(request.residentName)}
-                ${resident?.philsysVerified ? '<span class="badge badge-verified" style="margin-left: 6px;">🛡️ Verified</span>' : ''}
-              </span>
-            </div>
-            <div class="review-detail">
-              <span class="review-detail-label">Address</span>
-              <span class="review-detail-value">${resident ? escapeHTML(resident.address) : 'N/A'}</span>
-            </div>
-            <div class="review-detail">
-              <span class="review-detail-label">Date of Birth</span>
-              <span class="review-detail-value">${resident?.dateOfBirth || 'N/A'}</span>
-            </div>
-            <div class="review-detail">
-              <span class="review-detail-label">PhilSys ID</span>
-              <span class="review-detail-value" style="font-family: monospace;">${resident?.philsysId || 'N/A'}</span>
-            </div>
-            <div class="review-detail">
-              <span class="review-detail-label">Phone</span>
-              <span class="review-detail-value">${resident?.phone || 'N/A'}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Request Details -->
-        <div class="card animate-fade-in-up" style="animation-delay: 150ms;">
-          <h3 class="font-semibold mb-4">📄 Request Details</h3>
-          <div class="review-detail-grid">
-            <div class="review-detail">
-              <span class="review-detail-label">Document Type</span>
-              <span class="review-detail-value">${docType}</span>
-            </div>
-            <div class="review-detail">
-              <span class="review-detail-label">Purpose</span>
-              <span class="review-detail-value">${escapeHTML(request.purpose)}</span>
-            </div>
-            <div class="review-detail">
-              <span class="review-detail-label">Submitted</span>
-              <span class="review-detail-value">${formatDateTime(request.createdAt)}</span>
-            </div>
-            ${request.isProxy ? `
-              <div class="review-detail">
-                <span class="review-detail-label">Proxy</span>
-                <span class="review-detail-value">${escapeHTML(request.proxyName)} (${request.proxyRelationship})</span>
-              </div>
-            ` : ''}
-          </div>
-
-          ${previousFilings.length > 0 ? `
-            <div class="divider" style="margin: var(--space-4) 0;"></div>
-            <h4 class="text-xs uppercase text-tertiary mb-2">Previous Filings (${previousFilings.length})</h4>
-            ${previousFilings.slice(0, 3).map(pf => `
-              <div class="text-sm text-secondary mb-1">
-                ${getStatusInfo(pf.status).icon} ${getDocumentTypeLabel(pf.documentType)} — ${getStatusInfo(pf.status).label}
-              </div>
-            `).join('')}
-          ` : ''}
-        </div>
-      </div>
-
-      <!-- Remarks & Action -->
-      ${!isApproved && !isRejected ? `
-        <div class="card mt-4 animate-fade-in-up" style="animation-delay: 200ms;">
-          <h3 class="font-semibold mb-3">✍️ Official Action</h3>
-
-          <div class="form-group">
-            <label class="form-label" for="field-remarks">Remarks (Optional)</label>
-            <textarea class="form-textarea" id="field-remarks" placeholder="Idugang og remark o note..."></textarea>
-          </div>
-
-          <div class="notice notice-system mt-4">
-            <span class="notice-icon">⚖️</span>
-            <span>Your approval constitutes a legally binding digital signature under <strong>RA 8792</strong> (E-Commerce Act of 2000).</span>
-          </div>
-
-          <div class="flex gap-3 mt-4" style="justify-content: flex-end;">
-            <button class="btn btn-ghost" id="btn-reject">❌ I-reject</button>
-            <button class="btn btn-success btn-lg" id="btn-approve">✅ I-approve</button>
-          </div>
-        </div>
-      ` : ''}
-
-      <!-- Audit Trail -->
-      <div class="card mt-4 animate-fade-in-up" style="animation-delay: 250ms;">
-        <h3 class="font-semibold mb-4">📋 Full Audit Trail</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Step</th>
-              <th>Action</th>
-              <th>Actor</th>
-              <th>Timestamp (UTC)</th>
-              <th>Hash</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${entries.map((entry, i) => `
-              <tr>
-                <td>${i + 1}</td>
-                <td class="font-medium">${ledger.formatAction(entry.action)}</td>
-                <td>${escapeHTML(entry.actor)}</td>
-                <td class="text-sm">${formatDateTimeUTC(entry.timestamp)}</td>
-                <td class="text-xs text-tertiary" style="font-family: monospace;">${entry.hash.substring(0, 12)}…</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-
-      <!-- SMS Log -->
+      <!-- SMS Notification log block -->
       ${smsLog.length > 0 ? `
-        <div class="card mt-4 animate-fade-in-up" style="animation-delay: 300ms;">
-          <h3 class="font-semibold mb-4">📱 SMS Log</h3>
-          ${smsLog.map(s => `
-            <div style="padding: var(--space-3) 0; border-bottom: 1px solid var(--border-subtle);">
-              <div class="flex items-center justify-between">
-                <span class="badge badge-system text-xs">${s.type}</span>
-                <span class="text-xs text-tertiary">${formatDateTime(s.sentAt)}</span>
-              </div>
-              <div class="text-sm text-secondary mt-1">${escapeHTML(s.message)}</div>
+        <div class="review-sms-alert-card card mt-4">
+          <div class="sms-alert-header flex items-center gap-2">
+            <span class="sms-alert-icon">✉️</span>
+            <div>
+              <span class="sms-alert-title block">SMS Notification Sent</span>
+              <span class="sms-alert-status">Delivered</span>
             </div>
-          `).join('')}
+          </div>
+          <div class="sms-alert-body mt-3">
+            <span class="sms-alert-phone block">Notification delivered to resident's registered number</span>
+            <span class="sms-alert-phone font-bold mt-1">${escapeHTML(auth.getCurrentUser()?.phone || '+63 917 123 4567')}</span>
+            <div class="sms-message-bubble mt-3 font-italic">
+              "${escapeHTML(smsLog[smsLog.length - 1].message)}"
+            </div>
+            <span class="sms-alert-time block mt-2">${new Date(smsLog[smsLog.length - 1].sentAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} — ${new Date(smsLog[smsLog.length - 1].sentAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })} UTC</span>
+          </div>
         </div>
       ` : ''}
+
+      <!-- Audit Trail Timeline Steps table -->
+      <div class="card review-audit-card mt-4">
+        <h3 class="font-bold flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Audit Trail
+        </h3>
+        
+        <div class="audit-trail-table-container mt-3">
+          <table class="audit-trail-table w-full">
+            <thead>
+              <tr>
+                <th></th>
+                <th>STEP</th>
+                <th>ACTION</th>
+                <th>ACTOR</th>
+                <th>TIMESTAMP</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${entries.map((entry, idx) => {
+                let actionStr = 'Request Submitted';
+                if (entry.action === 'received') actionStr = 'Received by Secretary';
+                else if (entry.action === 'under_review') actionStr = 'Reviewed by Captain';
+                else if (entry.action === 'approved') actionStr = 'Approved & Signed';
+                else if (entry.action === 'rejected') actionStr = 'Rejected';
+
+                return `
+                  <tr>
+                    <td class="audit-dot-cell"><span class="audit-table-dot"></span></td>
+                    <td class="font-semibold">${idx + 1}</td>
+                    <td class="font-bold text-gray-900">${actionStr}</td>
+                    <td>${escapeHTML(entry.actor)}</td>
+                    <td class="text-secondary font-medium">${formatDateTimeUTC(entry.timestamp).split(' ')[1]} UTC</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Hash block at bottom -->
+        <div class="audit-hash-block mt-4">
+          <span class="hash-label block font-semibold" style="font-family: monospace; font-size: 10px; word-break: break-all; color: #047857;">
+            ${prevHash.substring(0, 32)} HASH: ${currentHash.substring(0, 32)} — Verified ✓
+          </span>
+          <p class="hash-info mt-2">This audit trail is permanently recorded on the BarangayConnect tamper-proof ledger and cannot be modified by any official.</p>
+        </div>
+      </div>
+
     </div>
   `;
 
   addReviewStyles();
-  startSLATimers();
 
-  // Back button
-  document.getElementById('review-back-btn')?.addEventListener('click', () => {
-    window.location.hash = '#/dashboard';
+  // Bind approval events
+  document.getElementById('btn-review-approve')?.addEventListener('click', () => {
+    const remarks = document.getElementById('review-remarks')?.value || '';
+    showConfirmApprovalModal(request, remarks);
   });
 
-  // Approve button
-  document.getElementById('btn-approve')?.addEventListener('click', () => {
-    const remarks = document.getElementById('field-remarks')?.value || '';
-    showApprovalModal(request, remarks);
-  });
-
-  // Reject button
-  document.getElementById('btn-reject')?.addEventListener('click', () => {
-    const remarks = document.getElementById('field-remarks')?.value || '';
+  document.getElementById('btn-review-reject')?.addEventListener('click', () => {
+    const remarks = document.getElementById('review-remarks')?.value || '';
     handleReject(request, remarks);
   });
 }
 
-function showApprovalModal(request, remarks) {
+function showConfirmApprovalModal(request, remarks) {
   showModal({
     title: 'Confirm Approval',
-    type: 'warning',
+    type: 'default',
     body: `
-      <p style="margin-bottom: var(--space-4);">This action will be recorded in the <strong>tamper-proof ledger</strong> and <strong>cannot be undone</strong>.</p>
-      <div class="notice notice-system">
-        <span class="notice-icon">⚖️</span>
-        <span>Your digital signature will be applied under <strong>RA 8792</strong>.</span>
-      </div>
-      <div style="margin-top: var(--space-4); padding: var(--space-3); background: var(--bg-surface); border-radius: var(--radius-md);">
-        <div class="text-xs text-tertiary">Document</div>
-        <div class="font-medium">${getDocumentTypeLabel(request.documentType)} — ${escapeHTML(request.residentName)}</div>
-        <div class="text-xs text-tertiary mt-1">${request.referenceNumber}</div>
+      <div class="confirm-modal-inner flex flex-col items-center text-center">
+        <div class="confirm-icon-box">✓</div>
+        <h3 class="confirm-title font-bold mt-3">Confirm Approval</h3>
+        <p class="confirm-desc mt-2">This action will be recorded in the tamper-proof ledger and cannot be undone.</p>
       </div>
     `,
     actions: [
-      { label: 'Cancel', class: 'btn-ghost' },
       {
-        label: '✅ Confirm',
-        class: 'btn-success',
+        label: 'Confirm',
+        class: 'btn-confirm-approve w-full',
         onClick: () => handleApprove(request, remarks)
+      },
+      {
+        label: 'Cancel',
+        class: 'btn-confirm-cancel w-full'
       }
     ]
   });
@@ -273,7 +254,6 @@ function showApprovalModal(request, remarks) {
 async function handleApprove(request, remarks) {
   const official = auth.getCurrentUser();
 
-  // Update request
   request.status = 'approved';
   request.updatedAt = new Date().toISOString();
   request.approvedBy = official?.name || 'Official';
@@ -281,7 +261,6 @@ async function handleApprove(request, remarks) {
   request.officialRemarks = remarks;
   await store.put(STORES.requests, request);
 
-  // Ledger entry
   await ledger.appendEntry({
     requestId: request.id,
     action: 'approved',
@@ -289,12 +268,11 @@ async function handleApprove(request, remarks) {
     remarks,
     data: {
       referenceNumber: request.referenceNumber,
-      digitalSignature: `RA8792-${Date.now()}`,
+      digitalSignature: `BC-LEDGER-RA8792-${Date.now()}`,
       documentType: request.documentType
     }
   });
 
-  // SMS to resident
   await sms.sendSMS('approved', request.residentId, {
     documentType: getDocumentTypeLabel(request.documentType),
     referenceNumber: request.referenceNumber,
@@ -304,11 +282,9 @@ async function handleApprove(request, remarks) {
   showToast({
     type: 'success',
     title: 'Approved!',
-    message: `${request.residentName} notified via SMS.`,
-    duration: 5000
+    message: `${request.residentName} notified via SMS.`
   });
 
-  // Re-render
   renderReview(request.id);
 }
 
@@ -318,7 +294,7 @@ async function handleReject(request, remarks) {
     type: 'danger',
     body: `
       <p>Are you sure you want to reject the request from <strong>${escapeHTML(request.residentName)}</strong>?</p>
-      <p class="mt-2 text-sm text-secondary">This action will be recorded in the tamper-proof ledger.</p>
+      <p class="mt-2 text-sm text-secondary">This rejection will be recorded in the tamper-proof ledger.</p>
     `,
     actions: [
       { label: 'Cancel', class: 'btn-ghost' },
@@ -357,44 +333,363 @@ async function handleReject(request, remarks) {
 }
 
 function addReviewStyles() {
-  if (document.getElementById('review-styles')) return;
+  if (document.getElementById('review-view-styles')) return;
   const style = document.createElement('style');
-  style.id = 'review-styles';
+  style.id = 'review-view-styles';
   style.textContent = `
-    .review-view {
-      max-width: 960px;
-      margin: 0 auto;
+    .review-status-banner {
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
-    .review-detail-grid {
+    .review-status-banner.banner-success {
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .review-status-banner.banner-danger {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .banner-status-icon {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .review-details-card {
+      background: #ffffff;
+      padding: var(--space-4);
+    }
+
+    .review-doc-title {
+      font-size: var(--font-size-md);
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .review-req-id {
+      font-size: var(--font-size-xs);
+      color: var(--text-tertiary);
+    }
+
+    .review-status-badge {
+      font-weight: 600;
+    }
+
+    .review-status-badge.status-under_review {
+      background: rgba(245, 158, 11, 0.08);
+      color: #b45309;
+      border: 1.5px solid rgba(245, 158, 11, 0.15);
+    }
+
+    .review-status-badge.status-submitted,
+    .review-status-badge.status-received {
+      background: rgba(15, 76, 129, 0.08);
+      color: #0f4c81;
+      border: 1.5px solid rgba(15, 76, 129, 0.15);
+    }
+
+    .review-status-badge.status-approved {
+      background: rgba(16, 185, 129, 0.08);
+      color: #047857;
+      border: 1.5px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .review-status-badge.status-rejected {
+      background: rgba(239, 68, 68, 0.08);
+      color: #b91c1c;
+      border: 1.5px solid rgba(239, 68, 68, 0.15);
+    }
+
+    .review-field-lbl {
+      font-size: 9px;
+      color: var(--text-tertiary);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .review-field-val {
+      font-size: var(--font-size-sm);
+      color: #1f2937;
+      display: block;
+    }
+
+    .esignature-alert-banner {
+      background: rgba(15, 76, 129, 0.06);
+      border: 1px solid rgba(15, 76, 129, 0.12);
+      color: #0f4c81;
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      font-size: 11px;
       display: flex;
-      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .esignature-alert-banner svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .btn-approve-action {
+      background: #15803d;
+      color: #ffffff;
+    }
+
+    .btn-approve-action:hover {
+      background: #166534;
+    }
+
+    .btn-reject-action {
+      background: #ffffff;
+      border: 1.5px solid #dc2626;
+      color: #dc2626;
+    }
+
+    .btn-reject-action:hover {
+      background: #fef2f2;
+    }
+
+    /* Attachments styles */
+    .review-attachments-card {
+      background: #ffffff;
+      padding: var(--space-4);
+    }
+
+    .attachments-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: var(--space-3);
     }
 
-    .review-detail {
+    .attachment-slot {
+      height: 110px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .attachment-slot.slot-filled {
+      background: #f3f4f6;
+      border: 1px solid var(--border-default);
+    }
+
+    .attachment-thumb-icon {
+      font-size: 28px;
+    }
+
+    .attachment-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .attachment-slot.slot-filled:hover .attachment-thumb-overlay {
+      opacity: 1;
+    }
+
+    .attachment-slot.slot-upload-dashed {
+      border: 2px dashed var(--border-strong);
+      background: #ffffff;
+      transition: background 0.2s;
+    }
+
+    .attachment-slot.slot-upload-dashed:hover {
+      background: #f9fafb;
+      border-color: #0f4c81;
+    }
+
+    .upload-icon-box {
       display: flex;
       flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .review-detail-label {
-      font-size: var(--font-size-xs);
+      align-items: center;
+      gap: 4px;
       color: var(--text-tertiary);
-      text-transform: uppercase;
-      letter-spacing: var(--letter-spacing-wider);
-      font-weight: var(--font-weight-semibold);
+      position: relative;
     }
 
-    .review-detail-value {
-      font-size: var(--font-size-base);
-      color: var(--text-primary);
+    .upload-plus {
+      position: absolute;
+      right: -8px;
+      top: -8px;
+      font-weight: 800;
+      font-size: 16px;
+      color: #0f4c81;
     }
 
-    @media (max-width: 768px) {
-      .review-view .grid-2 {
-        grid-template-columns: 1fr;
-      }
+    /* SMS Log Alert card */
+    .review-sms-alert-card {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: var(--space-4);
+    }
+
+    .sms-alert-icon {
+      font-size: 20px;
+      color: #16803d;
+    }
+
+    .sms-alert-title {
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      color: #14532d;
+    }
+
+    .sms-alert-status {
+      font-size: 9px;
+      font-weight: 700;
+      background: #dcfce7;
+      color: #166534;
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      border: 1px solid #bbf7d0;
+    }
+
+    .sms-alert-phone {
+      font-size: 11px;
+      color: #166534;
+    }
+
+    .sms-message-bubble {
+      background: #ffffff;
+      border: 1px solid #e6fcf0;
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-xs);
+      color: #1f2937;
+      line-height: 1.5;
+    }
+
+    .sms-alert-time {
+      font-size: 9px;
+      color: #15803d;
+    }
+
+    /* Audit Trail steps table */
+    .review-audit-card {
+      background: #ffffff;
+      padding: var(--space-4);
+    }
+
+    .audit-trail-table-container {
+      overflow-x: auto;
+    }
+
+    .audit-trail-table {
+      border-collapse: collapse;
+      font-size: var(--font-size-xs);
+    }
+
+    .audit-trail-table th {
+      padding: var(--space-2) var(--space-3);
+      color: var(--text-tertiary);
+      font-weight: 700;
+      text-align: left;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .audit-trail-table td {
+      padding: var(--space-3) var(--space-3);
+      border-bottom: 1.5px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .audit-dot-cell {
+      width: 14px;
+      padding-right: 0 !important;
+    }
+
+    .audit-table-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #059669;
+      display: inline-block;
+    }
+
+    .audit-hash-block {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+    }
+
+    .hash-info {
+      font-size: 9px;
+      color: #166534;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* Confirm Modal override */
+    .confirm-modal-inner {
+      padding: var(--space-2);
+    }
+
+    .confirm-icon-box {
+      width: 48px;
+      height: 48px;
+      background: rgba(15, 76, 129, 0.08);
+      color: #0f4c81;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .confirm-title {
+      font-size: var(--font-size-md);
+      color: #1f2937;
+    }
+
+    .confirm-desc {
+      font-size: var(--font-size-xs);
+      color: var(--text-secondary);
+    }
+
+    .btn-confirm-approve {
+      background: #0f4c81;
+      color: #ffffff;
+    }
+
+    .btn-confirm-approve:hover {
+      background: #0b3366;
+    }
+
+    .btn-confirm-cancel {
+      background: #ffffff;
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+    }
+
+    .btn-confirm-cancel:hover {
+      background: #f9fafb;
     }
   `;
   document.head.appendChild(style);

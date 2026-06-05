@@ -122,12 +122,12 @@ function addModalStyles() {
     }
 
     .modal-container {
-      background: var(--color-primary-800);
+      background: #ffffff;
       border: 1px solid var(--border-default);
       border-radius: var(--radius-2xl);
       box-shadow: var(--shadow-xl);
-      max-width: 480px;
-      width: 100%;
+      max-width: 400px;
+      width: 90%;
       overflow: hidden;
       transform: scale(0.95) translateY(8px);
       transition: transform 0.3s var(--ease-spring);
