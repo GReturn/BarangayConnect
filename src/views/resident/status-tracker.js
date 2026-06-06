@@ -258,10 +258,10 @@ export async function renderStatusTracker(requestId) {
 
       <!-- Filters Row -->
       <div class="status-filters-row mt-6">
-        <button class="filter-chip active">${t('status.filterAll')}</button>
-        <button class="filter-chip">${t('status.filterReceived')}</button>
-        <button class="filter-chip">${t('status.filterReview')}</button>
-        <button class="filter-chip">${t('status.filterRejected')}</button>
+        <button class="filter-chip active" data-filter="all">${t('status.filterAll')}</button>
+        <button class="filter-chip" data-filter="received">${t('status.filterReceived')}</button>
+        <button class="filter-chip" data-filter="processing">${t('status.filterReview')}</button>
+        <button class="filter-chip" data-filter="rejected">${t('status.filterRejected')}</button>
       </div>
 
       <!-- List of Other/Mock Requests -->
@@ -271,7 +271,7 @@ export async function renderStatusTracker(requestId) {
           const info = getStatusInfo(req.status);
           const lbl = getDocumentTypeLabel(req.documentType);
           return `
-            <div class="history-item card clickable-history-card" data-request-id="${req.id}">
+            <div class="history-item card clickable-history-card" data-request-id="${req.id}" data-status="${req.status}">
               <div class="history-header">
                 <span class="history-item-icon">📄</span>
                 <div>
@@ -289,7 +289,7 @@ export async function renderStatusTracker(requestId) {
 
         <!-- Mock requests to fill design -->
         ${mockRequests.map(mock => `
-          <div class="history-item card" id="${mock.id}">
+          <div class="history-item card" id="${mock.id}" data-status="${mock.status}">
             <div class="history-header">
               <span class="history-item-icon">${mock.documentType === 'street_repair' ? '⚡' : '📄'}</span>
               <div>
@@ -338,6 +338,40 @@ export async function renderStatusTracker(requestId) {
       type: 'success',
       title: 'SMS Settings Updated',
       message: activeRequest.smsNotifications ? 'Notifications enabled' : 'Notifications disabled'
+    });
+  });
+
+  // Bind filter chips clicks to filter logs list
+  main.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      main.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+
+      const filter = chip.dataset.filter;
+      main.querySelectorAll('.requests-history-list .history-item').forEach(item => {
+        const status = item.dataset.status;
+        if (filter === 'all') {
+          item.style.display = '';
+        } else if (filter === 'received') {
+          if (['received', 'submitted', 'queued_offline'].includes(status)) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        } else if (filter === 'processing') {
+          if (['under_review', 'processing', 'received', 'submitted'].includes(status)) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        } else if (filter === 'rejected') {
+          if (status === 'rejected') {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        }
+      });
     });
   });
 
