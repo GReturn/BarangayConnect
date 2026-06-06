@@ -121,21 +121,15 @@ export async function renderReview(requestId) {
       <div class="card review-attachments-card mt-4">
         <h3 class="font-bold mb-3">Attachments</h3>
         <div class="attachments-grid">
-          <!-- Attachment Slot 1: Thumbnail -->
-          <div class="attachment-slot slot-filled">
-            <div class="attachment-thumb-icon">📄</div>
-            <div class="attachment-thumb-overlay">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          ${request.attachments && request.attachments.length > 0 ? request.attachments.map((base64, idx) => `
+            <div class="attachment-slot slot-filled clickable-attachment" data-attachment-index="${idx}" style="background: url(${base64}) center/cover no-repeat;">
+              <div class="attachment-thumb-overlay">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </div>
             </div>
-          </div>
-          
-          <!-- Attachment Slot 2: Add plus -->
-          <div class="attachment-slot slot-upload-dashed">
-            <div class="upload-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-              <span class="upload-plus">+</span>
-            </div>
-          </div>
+          `).join('') : `
+            <p class="text-xs text-tertiary">No supporting document attachments uploaded.</p>
+          `}
         </div>
       </div>
 
@@ -214,6 +208,15 @@ export async function renderReview(requestId) {
 
   addReviewStyles();
 
+  // Bind clickable attachments for Lightbox
+  main.querySelectorAll('.clickable-attachment').forEach(item => {
+    item.addEventListener('click', () => {
+      const idx = parseInt(item.dataset.attachmentIndex, 10);
+      const base64 = request.attachments[idx];
+      showAttachmentLightbox(base64);
+    });
+  });
+
   // Bind approval events
   document.getElementById('btn-review-approve')?.addEventListener('click', () => {
     const remarks = document.getElementById('review-remarks')?.value || '';
@@ -223,6 +226,48 @@ export async function renderReview(requestId) {
   document.getElementById('btn-review-reject')?.addEventListener('click', () => {
     const remarks = document.getElementById('review-remarks')?.value || '';
     handleReject(request, remarks);
+  });
+}
+
+function showAttachmentLightbox(base64) {
+  let zoom = 1;
+  let rotation = 0;
+
+  const updateTransform = () => {
+    const img = document.getElementById('lightbox-img');
+    if (img) {
+      img.style.transform = `scale(${zoom}) rotate(${rotation}deg)`;
+    }
+  };
+
+  showModal({
+    title: 'Attachment Lightbox',
+    body: `
+      <div class="lightbox-modal-content flex flex-col items-center">
+        <div class="lightbox-img-frame" style="width:100%; height:240px; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; background:#0f172a;">
+          <img id="lightbox-img" src="${base64}" alt="Attachment" style="max-width:100%; max-height:100%; object-fit:contain; transition: transform 0.2s;" />
+        </div>
+        <div class="lightbox-toolbar flex gap-2 mt-4" style="justify-content:center;">
+          <button class="btn btn-ghost btn-sm" id="btn-zoom-in" style="font-size:11px;">🔍+ Zoom In</button>
+          <button class="btn btn-ghost btn-sm" id="btn-zoom-out" style="font-size:11px;">🔍- Zoom Out</button>
+          <button class="btn btn-ghost btn-sm" id="btn-rotate" style="font-size:11px;">🔄 Rotate</button>
+        </div>
+      </div>
+    `,
+    actions: [{ label: 'Close', class: 'btn-primary' }]
+  });
+
+  document.getElementById('btn-zoom-in')?.addEventListener('click', () => {
+    zoom += 0.25;
+    updateTransform();
+  });
+  document.getElementById('btn-zoom-out')?.addEventListener('click', () => {
+    if (zoom > 0.5) zoom -= 0.25;
+    updateTransform();
+  });
+  document.getElementById('btn-rotate')?.addEventListener('click', () => {
+    rotation = (rotation + 90) % 360;
+    updateTransform();
   });
 }
 

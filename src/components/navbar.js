@@ -67,10 +67,10 @@ export function renderNavbar() {
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
           <span class="bottom-nav-label">Logs</span>
         </a>
-        <button class="bottom-nav-tab btn-reset-tab" id="tab-official-profile">
+        <a href="#/profile" class="bottom-nav-tab" id="tab-official-profile">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           <span class="bottom-nav-label">Profile</span>
-        </button>
+        </a>
       ` : `
         <!-- Resident Bottom Nav -->
         <a href="#/" class="bottom-nav-tab" id="tab-resident-home">
@@ -85,10 +85,10 @@ export function renderNavbar() {
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M12 9v4"></path><path d="M12 16v.01"></path></svg>
           <span class="bottom-nav-label">Pahibalo</span>
         </a>
-        <button class="bottom-nav-tab btn-reset-tab" id="tab-resident-profile">
+        <a href="#/profile" class="bottom-nav-tab" id="tab-resident-profile">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           <span class="bottom-nav-label">Akawnt</span>
-        </button>
+        </a>
       `}
     </div>
   `;
@@ -104,7 +104,6 @@ export function renderNavbar() {
 
   // Toggle user list dropdown
   const trigger = document.getElementById('navbar-user-trigger');
-  const profileTab = document.getElementById(isOfficialUser ? 'tab-official-profile' : 'tab-resident-profile');
   const dropdown = document.getElementById('navbar-dropdown');
 
   const toggleDropdown = (e) => {
@@ -113,7 +112,6 @@ export function renderNavbar() {
   };
 
   trigger?.addEventListener('click', toggleDropdown);
-  profileTab?.addEventListener('click', toggleDropdown);
 
   document.addEventListener('click', () => {
     dropdown?.classList.remove('open');
@@ -135,6 +133,8 @@ function updateActiveTab(isOfficialUser, currentHash) {
       document.getElementById('tab-official-logs')?.classList.add('active');
     } else if (currentHash.startsWith('#/review')) {
       document.getElementById('tab-official-requests')?.classList.add('active');
+    } else if (currentHash.startsWith('#/profile')) {
+      document.getElementById('tab-official-profile')?.classList.add('active');
     }
   } else {
     if (currentHash === '#/' || currentHash === '#') {
@@ -143,6 +143,8 @@ function updateActiveTab(isOfficialUser, currentHash) {
       document.getElementById('tab-resident-requests')?.classList.add('active');
     } else if (currentHash.startsWith('#/sms-log')) {
       document.getElementById('tab-resident-bulletin')?.classList.add('active');
+    } else if (currentHash.startsWith('#/profile')) {
+      document.getElementById('tab-resident-profile')?.classList.add('active');
     }
   }
 }

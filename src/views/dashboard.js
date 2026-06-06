@@ -12,6 +12,9 @@ export async function renderDashboard() {
   const main = document.getElementById('main-content');
   if (!main) return;
 
+  const activeSos = JSON.parse(localStorage.getItem('brgyconnect_active_sos') || '[]');
+  const unresolvedSOS = activeSos.filter(s => s.status !== 'resolved');
+
   const allRequests = await store.getAll(STORES.requests);
 
   // Filter queue requests (pending approval)
@@ -36,6 +39,14 @@ export async function renderDashboard() {
   main.innerHTML = `
     <div class="official-dashboard-view animate-fade-in">
       
+      <!-- SOS Active Emergency Notification -->
+      ${unresolvedSOS.length > 0 ? `
+        <div class="dashboard-emergency-banner animate-pulse" id="sos-alert-banner" style="background:#fee2e2; border: 1.5px solid #fca5a5; border-radius:var(--radius-lg); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-4); display:flex; justify-content:space-between; align-items:center; color:#991b1b; font-size:var(--font-size-sm); font-weight:600;">
+          <span class="flex items-center gap-2">🚨 <span>Distress alert active! ${unresolvedSOS.length} unresolved SOS signal(s)</span></span>
+          <button class="btn btn-danger btn-sm" id="btn-dispatch-sos">Open Dispatch Center</button>
+        </div>
+      ` : ''}
+
       <!-- Dashboard Top Banner -->
       <div class="dashboard-banner">
         <span class="banner-org">DUMALA SA MGA HANGYO</span>
@@ -220,19 +231,15 @@ export async function renderDashboard() {
   });
 
   document.getElementById('btn-blockchain-audit')?.addEventListener('click', () => {
-    showToast({
-      type: 'success',
-      title: 'Ledger Audit Passed',
-      message: 'Verified 42 transaction hashes. Blockchain sequence intact.'
-    });
+    window.location.hash = '#/ledger-explorer';
   });
 
   document.getElementById('btn-view-insights')?.addEventListener('click', () => {
-    showToast({
-      type: 'success',
-      title: 'Opening Insights',
-      message: 'Loading predictive metrics reports.'
-    });
+    window.location.hash = '#/insights';
+  });
+
+  document.getElementById('btn-dispatch-sos')?.addEventListener('click', () => {
+    window.location.hash = '#/sos-dispatch';
   });
 }
 

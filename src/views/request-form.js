@@ -113,6 +113,21 @@ export async function renderRequestForm() {
 
         <div class="divider"></div>
 
+        <!-- Supporting Documents Upload -->
+        <div class="form-section">
+          <label class="form-label font-bold">Mga Lakip nga Dokumento (Supporting Documents)</label>
+          <span class="form-hint mb-2 block">Upload required documents (e.g. ID, Proof of Indigency, or medical cert)</span>
+          <div class="sig-upload-area" id="doc-dropzone" style="border: 2px dashed var(--border-strong); border-radius: var(--radius-md); padding: var(--space-5); display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; gap: 8px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <span class="text-xs text-secondary">I-drag ug I-drop ang file o I-click para mag-upload</span>
+            <input type="file" id="doc-file-input" accept="image/*" style="display:none;" />
+          </div>
+          <!-- Uploaded files list -->
+          <div id="uploaded-files-preview" class="mt-3 flex gap-2" style="flex-wrap: wrap;"></div>
+        </div>
+
+        <div class="divider"></div>
+
         <!-- Proxy Claiming -->
         <div class="form-section">
           <div class="toggle-wrapper" id="proxy-toggle-wrapper">
@@ -204,6 +219,48 @@ export async function renderRequestForm() {
 }
 
 function bindFormEvents(user, isOnline) {
+  // File attachments logic
+  const docDropzone = document.getElementById('doc-dropzone');
+  const docFileInput = document.getElementById('doc-file-input');
+  const previewContainer = document.getElementById('uploaded-files-preview');
+  let uploadedAttachments = [];
+
+  docDropzone?.addEventListener('click', () => docFileInput?.click());
+
+  docFileInput?.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target.result;
+        uploadedAttachments.push(base64);
+
+        const thumb = document.createElement('div');
+        thumb.className = 'attachment-thumbnail-preview animate-fade-in';
+        thumb.style.width = '64px';
+        thumb.style.height = '64px';
+        thumb.style.borderRadius = 'var(--radius-md)';
+        thumb.style.border = '1px solid var(--border-strong)';
+        thumb.style.overflow = 'hidden';
+        thumb.style.position = 'relative';
+        thumb.style.background = `url(${base64}) center/cover no-repeat`;
+
+        const delBtn = document.createElement('button');
+        delBtn.innerHTML = '×';
+        delBtn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:16px; height:16px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold;';
+        delBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          uploadedAttachments = uploadedAttachments.filter(item => item !== base64);
+          thumb.remove();
+        });
+
+        thumb.appendChild(delBtn);
+        previewContainer?.appendChild(thumb);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
   // Proxy toggle
   const proxyToggle = document.getElementById('proxy-toggle');
   const proxyFields = document.getElementById('proxy-fields');
@@ -218,11 +275,11 @@ function bindFormEvents(user, isOnline) {
   // Form submit
   document.getElementById('request-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    await handleSubmit(user, isOnline, proxyEnabled);
+    await handleSubmit(user, isOnline, proxyEnabled, uploadedAttachments);
   });
 }
 
-async function handleSubmit(user, isOnline, proxyEnabled) {
+async function handleSubmit(user, isOnline, proxyEnabled, uploadedAttachments = []) {
   const docType = document.getElementById('field-doc-type')?.value;
   const purpose = document.getElementById('field-purpose')?.value;
 
@@ -269,6 +326,7 @@ async function handleSubmit(user, isOnline, proxyEnabled) {
     proxyToken,
     proxyTokenExpiry: tokenExpiry,
     smsNotifications: true,
+    attachments: uploadedAttachments,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };

@@ -201,7 +201,7 @@ export async function renderHome() {
   });
 
   document.getElementById('action-emergency')?.addEventListener('click', () => {
-    showEmergencyModal();
+    showEmergencyModal(user);
   });
 
   // Bind active request cards to status pages
@@ -382,7 +382,7 @@ function showBarangayIDModal(user) {
   }
 }
 
-function showEmergencyModal() {
+function showEmergencyModal(user) {
   showModal({
     title: 'Trigger Emergency SOS?',
     type: 'danger',
@@ -396,6 +396,18 @@ function showEmergencyModal() {
         label: '🚨 Call SOS Help',
         class: 'btn-danger',
         onClick: () => {
+          // Log active SOS signal
+          const activeSos = JSON.parse(localStorage.getItem('brgyconnect_active_sos') || '[]');
+          activeSos.push({
+            id: `sos-${Date.now()}`,
+            residentName: user ? user.name : 'Juan dela Cruz',
+            residentPhone: user ? user.phone : '+63 918 987 6543',
+            address: user ? user.address : 'Purok 7, Barangay San Jose, Cebu City',
+            timestamp: new Date().toISOString(),
+            status: 'pending'
+          });
+          localStorage.setItem('brgyconnect_active_sos', JSON.stringify(activeSos));
+
           showToast({
             type: 'error',
             title: 'Emergency Signal Sent!',

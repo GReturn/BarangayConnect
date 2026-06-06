@@ -8,6 +8,10 @@ import { renderStatusTracker } from './views/status-tracker.js';
 import { renderDashboard } from './views/dashboard.js';
 import { renderReview } from './views/review.js';
 import { renderSMSLog } from './views/sms-log.js';
+import { renderProfile } from './views/profile.js';
+import { renderSOSDispatch } from './views/sos-dispatch.js';
+import { renderLedgerExplorer } from './views/ledger-explorer.js';
+import { renderInsights } from './views/insights.js';
 import { stopSLATimers } from './components/sla-timer.js';
 
 const routes = [
@@ -17,6 +21,10 @@ const routes = [
   { pattern: /^#\/dashboard$/, handler: () => renderDashboard() },
   { pattern: /^#\/review\/(.+)$/, handler: (match) => renderReview(match[1]) },
   { pattern: /^#\/sms-log$/, handler: () => renderSMSLog() },
+  { pattern: /^#\/profile$/, handler: () => renderProfile() },
+  { pattern: /^#\/sos-dispatch$/, handler: () => renderSOSDispatch() },
+  { pattern: /^#\/ledger-explorer$/, handler: () => renderLedgerExplorer() },
+  { pattern: /^#\/insights$/, handler: () => renderInsights() },
 ];
 
 function navigateTo(hash) {
