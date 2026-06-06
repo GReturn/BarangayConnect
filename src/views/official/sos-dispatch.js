@@ -84,23 +84,25 @@ export async function renderSOSDispatch() {
                     📍 ${escapeHTML(alert.address)}
                   </div>
 
-                  <div class="alarm-status-row mt-3 flex items-center justify-between">
-                    <span class="badge ${isDispatched ? 'badge-warning' : 'badge-danger'} font-bold">
-                      ${alert.status.toUpperCase()}
-                    </span>
-                    
-                    <div class="alarm-actions flex gap-2">
-                      <a href="tel:${alert.residentPhone}" class="btn btn-ghost btn-sm flex items-center justify-center" title="Call Resident">
-                        ${t('sos.callBtn')}
-                      </a>
-                      ${!isDispatched ? `
-                        <button class="btn btn-warning btn-sm btn-dispatch" data-sos-id="${alert.id}">
-                          ${t('sos.dispatchBtn')}
+                  <div class="alarm-status-row mt-3">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                      <span class="badge ${isDispatched ? 'badge-warning' : 'badge-danger'} font-bold">
+                        ${alert.status.toUpperCase()}
+                      </span>
+                      
+                      <div class="alarm-actions flex gap-2 flex-wrap">
+                        <a href="tel:${alert.residentPhone}" class="btn btn-ghost btn-sm flex items-center justify-center" title="Call Resident">
+                          ${t('sos.callBtn')}
+                        </a>
+                        ${!isDispatched ? `
+                          <button class="btn btn-warning btn-sm btn-dispatch" data-sos-id="${alert.id}">
+                            ${t('sos.dispatchBtn')}
+                          </button>
+                        ` : ''}
+                        <button class="btn btn-success btn-sm btn-resolve" data-sos-id="${alert.id}">
+                          ${t('sos.resolveBtn')}
                         </button>
-                      ` : ''}
-                      <button class="btn btn-success btn-sm btn-resolve" data-sos-id="${alert.id}">
-                        ${t('sos.resolveBtn')}
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -122,7 +124,7 @@ export async function renderSOSDispatch() {
                 <div class="resolved-log-item card flex justify-between items-center py-2 px-3">
                   <div>
                     <span class="font-bold text-xs text-secondary">${escapeHTML(alert.residentName)}</span>
-                    <span class="block text-tertiary" style="font-size: 9px;">📍 ${escapeHTML(alert.address)}</span>
+                    <span class="block text-tertiary" style="font-size: var(--font-size-xs);">📍 ${escapeHTML(alert.address)}</span>
                   </div>
                   <span class="badge badge-success text-xs">RESOLVED</span>
                 </div>
@@ -316,9 +318,15 @@ function addSOSDispatchStyles() {
 
     .map-mock-bg {
       height: 480px;
-      background: linear-gradient(180deg, #0b0f19 0%, #111827 100%); /* Premium dark GPS center */
+      background: linear-gradient(180deg, #0b0f19 0%, #111827 100%);
       position: relative;
       overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .map-mock-bg {
+        height: 260px;
+      }
     }
 
     .map-grid-pattern {
@@ -414,10 +422,10 @@ function addSOSDispatchStyles() {
       background: rgba(17, 24, 39, 0.9);
       padding: 4px var(--space-3);
       border-radius: var(--radius-sm);
-      font-size: 8px;
+      font-size: var(--font-size-xs);
       color: #cbd5e1;
       font-weight: 700;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.5px;
       border: 1px solid #374151;
     }
 

@@ -110,10 +110,10 @@ export async function renderReview(requestId) {
             <span>${t('review.esignNote')}</span>
           </div>
 
-          <!-- Approve/Reject buttons -->
-          <div class="review-actions-row flex gap-3 mt-4">
+          <!-- Approve/Reject buttons — stack vertically on mobile -->
+          <div class="review-actions-row mt-4">
             <button class="btn btn-approve-action w-full" id="btn-review-approve">${t('review.approveBtn')}</button>
-            <button class="btn btn-reject-action w-full" id="btn-review-reject">${t('review.rejectBtn')}</button>
+            <button class="btn btn-reject-action w-full mt-2" id="btn-review-reject">${t('review.rejectBtn')}</button>
           </div>
         ` : ''}
       </div>
@@ -197,7 +197,7 @@ export async function renderReview(requestId) {
 
         <!-- Hash block at bottom -->
         <div class="audit-hash-block mt-4">
-          <span class="hash-label block font-semibold" style="font-family: monospace; font-size: 10px; word-break: break-all; color: #047857;">
+          <span class="hash-label block font-semibold" style="font-family: monospace; font-size: var(--font-size-xs); word-break: break-all; color: #047857; line-height: 1.5;">
             ${prevHash.substring(0, 32)} HASH: ${currentHash.substring(0, 32)} — ${t('review.hashVerified')}
           </span>
           <p class="hash-info mt-2">${t('review.auditDesc')}</p>
@@ -248,10 +248,10 @@ function showAttachmentLightbox(base64) {
         <div class="lightbox-img-frame" style="width:100%; height:240px; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; background:#0f172a;">
           <img id="lightbox-img" src="${base64}" alt="Attachment" style="max-width:100%; max-height:100%; object-fit:contain; transition: transform 0.2s;" />
         </div>
-        <div class="lightbox-toolbar flex gap-2 mt-4" style="justify-content:center;">
-          <button class="btn btn-ghost btn-sm" id="btn-zoom-in" style="font-size:11px;">🔍+ Zoom In</button>
-          <button class="btn btn-ghost btn-sm" id="btn-zoom-out" style="font-size:11px;">🔍- Zoom Out</button>
-          <button class="btn btn-ghost btn-sm" id="btn-rotate" style="font-size:11px;">🔄 Rotate</button>
+        <div class="lightbox-toolbar flex gap-2 mt-4" style="justify-content:center; flex-wrap: wrap;">
+          <button class="btn btn-ghost btn-sm" id="btn-zoom-in">🔍+ Zoom In</button>
+          <button class="btn btn-ghost btn-sm" id="btn-zoom-out">🔍- Zoom Out</button>
+          <button class="btn btn-ghost btn-sm" id="btn-rotate">🔄 Rotate</button>
         </div>
       </div>
     `,
@@ -477,7 +477,7 @@ function addReviewStyles() {
       color: #0f4c81;
       border-radius: var(--radius-md);
       padding: var(--space-3);
-      font-size: 11px;
+      font-size: var(--font-size-sm);
       display: flex;
       align-items: flex-start;
       gap: 8px;
@@ -642,6 +642,7 @@ function addReviewStyles() {
 
     .audit-trail-table-container {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .audit-trail-table {
@@ -685,7 +686,7 @@ function addReviewStyles() {
     }
 
     .hash-info {
-      font-size: 9px;
+      font-size: var(--font-size-xs);
       color: #166534;
       line-height: 1.4;
       margin: 0;

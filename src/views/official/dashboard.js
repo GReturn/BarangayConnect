@@ -42,7 +42,7 @@ export async function renderDashboard() {
       
       <!-- SOS Active Emergency Notification -->
       ${unresolvedSOS.length > 0 ? `
-        <div class="dashboard-emergency-banner animate-pulse" id="sos-alert-banner" style="background:#fee2e2; border: 1.5px solid #fca5a5; border-radius:var(--radius-lg); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-4); display:flex; justify-content:space-between; align-items:center; color:#991b1b; font-size:var(--font-size-sm); font-weight:600;">
+        <div class="dashboard-emergency-banner animate-pulse" id="sos-alert-banner" style="background:#fee2e2; border: 1.5px solid #fca5a5; border-radius:var(--radius-lg); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-4); display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); flex-wrap:wrap; color:#991b1b; font-size:var(--font-size-sm); font-weight:600;">
           <span class="flex items-center gap-2">🚨 <span>${t('dashboard.activeSosAlert', { count: unresolvedSOS.length })}</span></span>
           <button class="btn btn-danger btn-sm" id="btn-dispatch-sos">${t('dashboard.openDispatchBtn')}</button>
         </div>
@@ -307,9 +307,9 @@ function addDashboardStyles() {
     }
 
     .banner-org {
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       opacity: 0.7;
     }
 
@@ -332,11 +332,17 @@ function addDashboardStyles() {
       backdrop-filter: blur(4px);
     }
 
-    /* Stats Grid */
+    /* Stats Grid — responsive */
     .dashboard-stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--space-2);
+    }
+
+    @media (max-width: 380px) {
+      .dashboard-stats-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .stats-card {
@@ -348,7 +354,7 @@ function addDashboardStyles() {
     }
 
     .stats-label {
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-tertiary);
       text-transform: uppercase;
@@ -382,11 +388,11 @@ function addDashboardStyles() {
     }
 
     .stats-trend {
-      font-size: 9px;
+      font-size: 11px;
     }
 
     .stats-footer-text {
-      font-size: 8px;
+      font-size: 11px;
       color: var(--text-tertiary);
       margin-top: 2px;
     }
@@ -398,9 +404,9 @@ function addDashboardStyles() {
     }
 
     .queue-control-lbl {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-tertiary);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     /* Queue card items */
@@ -464,20 +470,20 @@ function addDashboardStyles() {
     }
 
     .queue-item-doctype {
-      font-size: 11px;
+      font-size: var(--font-size-xs);
       color: var(--text-tertiary);
     }
 
     .queue-priority-reason {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       color: #047857;
       font-weight: 500;
     }
 
     .queue-sla-alert {
-      font-size: 9px;
+      font-size: var(--font-size-xs);
       font-weight: 600;
-      padding: 3px 6px;
+      padding: 4px 8px;
       border-radius: var(--radius-sm);
       display: inline-flex;
       align-items: center;
@@ -520,7 +526,7 @@ function addDashboardStyles() {
     }
 
     .insights-desc {
-      font-size: 11px;
+      font-size: var(--font-size-xs);
       color: var(--text-secondary);
       line-height: 1.4;
       margin: 0;
@@ -534,9 +540,9 @@ function addDashboardStyles() {
     }
 
     .goal-title {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-tertiary);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     .goal-circle-wrapper {
@@ -544,7 +550,7 @@ function addDashboardStyles() {
     }
 
     .goal-desc {
-      font-size: 11px;
+      font-size: var(--font-size-xs);
       color: var(--text-secondary);
     }
 
@@ -556,9 +562,9 @@ function addDashboardStyles() {
     }
 
     .print-label {
-      font-size: 9px;
+      font-size: 11px;
       color: var(--text-tertiary);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       font-weight: 700;
     }
 
@@ -636,13 +642,13 @@ function addDashboardStyles() {
     }
 
     .ledger-log-title {
-      font-size: 11px;
+      font-size: var(--font-size-xs);
       font-weight: 500;
       color: #e5e7eb;
     }
 
     .ledger-log-sub {
-      font-size: 9px;
+      font-size: 11px;
       color: #9ca3af;
     }
 
@@ -652,12 +658,12 @@ function addDashboardStyles() {
     }
 
     .govchain-text {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       font-weight: 500;
     }
 
     .govchain-link {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       color: #0f4c81;
       font-weight: 600;
     }
