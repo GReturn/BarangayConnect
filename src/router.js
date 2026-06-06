@@ -18,7 +18,12 @@ import { stopSLATimers } from './components/sla-timer.js';
 const routes = [
   { pattern: /^#?\/?$/, handler: () => renderHome() },
   { pattern: /^#\/request$/, handler: () => renderRequestForm() },
-  { pattern: /^#\/status\/(.+)$/, handler: (match) => renderStatusTracker(match[1]) },
+  { pattern: /^#\/status$/, handler: () => renderStatusTracker(null) },
+  { pattern: /^#\/status\/(.+)$/, handler: (match) => {
+    // 'req' is a sentinel used in navbar links meaning "show my status list"
+    const id = match[1] === 'req' ? null : match[1];
+    renderStatusTracker(id);
+  }},
   { pattern: /^#\/dashboard$/, handler: () => renderDashboard() },
   { pattern: /^#\/review\/(.+)$/, handler: (match) => renderReview(match[1]) },
   { pattern: /^#\/sms-log$/, handler: () => renderSMSLog() },

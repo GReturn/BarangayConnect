@@ -405,16 +405,18 @@ function addTrackerStyles() {
     }
 
     .active-tracker-label {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       color: var(--text-tertiary);
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     .active-tracker-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: var(--space-2);
+      flex-wrap: wrap;
     }
 
     .active-tracker-title {
@@ -494,12 +496,12 @@ function addTrackerStyles() {
     }
 
     .progress-step-dot-small {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       font-weight: 700;
     }
 
     .progress-step-text {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       font-weight: 600;
     }
 
@@ -650,14 +652,14 @@ function addTrackerStyles() {
     }
 
     .ledger-field-lbl {
-      font-size: 8px;
+      font-size: var(--font-size-xs);
       color: var(--text-tertiary);
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     .ledger-subtext {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       color: var(--text-secondary);
       line-height: 1.4;
       margin: 0;
@@ -670,31 +672,49 @@ function addTrackerStyles() {
       padding: var(--space-3);
     }
 
-    /* Filters chips */
+    /* Filters chips — horizontally scrollable, mobile-friendly */
     .status-filters-row {
       display: flex;
       gap: 8px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
       padding-bottom: 4px;
+    }
+
+    .status-filters-row::-webkit-scrollbar {
+      display: none;
     }
 
     .filter-chip {
       background: #ffffff;
-      border: 1px solid var(--border-default);
+      border: 1.5px solid var(--border-default);
       border-radius: var(--radius-full);
-      padding: 6px 14px;
-      font-size: var(--font-size-xs);
+      /* Min 36px height for comfortable touch tap */
+      min-height: 36px;
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-sm);
       font-weight: 600;
       color: var(--text-secondary);
       cursor: pointer;
       white-space: nowrap;
+      /* Prevent chip from being crushed by flex */
+      flex-shrink: 0;
       transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .filter-chip.active {
       background: #0f4c81;
       color: #ffffff;
       border-color: #0f4c81;
+      font-weight: 700;
+    }
+
+    .filter-chip:hover:not(.active) {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
     }
 
     /* History item cards */
@@ -734,7 +754,7 @@ function addTrackerStyles() {
     }
 
     .history-item-date {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       color: var(--text-tertiary);
     }
 
@@ -765,7 +785,7 @@ function addTrackerStyles() {
       border-top: 1px solid var(--border-default);
       padding-top: 8px;
       margin-top: 8px;
-      font-size: 11px;
+      font-size: var(--font-size-xs);
       font-weight: 600;
       color: #0f4c81;
       cursor: pointer;
@@ -790,7 +810,7 @@ function addTrackerStyles() {
     }
 
     .pickup-qr-text {
-      font-size: 11px;
+      font-size: var(--font-size-xs);
       color: var(--text-secondary);
       max-width: 240px;
     }

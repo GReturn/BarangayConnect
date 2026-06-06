@@ -336,7 +336,7 @@ function showBarangayIDModal(user) {
         letter-spacing: 0.5px;
       }
       .id-card-title-sub {
-        font-size: 9px;
+        font-size: var(--font-size-xs);
         opacity: 0.7;
       }
       .id-card-body {
@@ -368,9 +368,9 @@ function showBarangayIDModal(user) {
         flex-direction: column;
       }
       .id-label {
-        font-size: 8px;
+        font-size: var(--font-size-xs);
         opacity: 0.6;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.3px;
         font-weight: 600;
       }
       .id-val {
@@ -391,7 +391,7 @@ function showBarangayIDModal(user) {
         gap: 4px;
       }
       .id-ver-text {
-        font-size: 10px;
+        font-size: var(--font-size-xs);
         font-weight: 600;
       }
       .id-card-qr svg {
@@ -499,7 +499,7 @@ function addHomeStyles() {
       background: rgba(255, 255, 255, 0.18);
       padding: 4px 8px;
       border-radius: var(--radius-full);
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
       margin-top: 12px;
       backdrop-filter: blur(4px);
@@ -520,12 +520,12 @@ function addHomeStyles() {
     }
 
     .section-subtitle-compact {
-      font-size: 11px;
+      font-size: var(--font-size-xs);
       color: var(--text-tertiary);
     }
 
     .section-action-link {
-      font-size: 11px;
+      font-size: var(--font-size-xs);
       font-weight: 600;
       color: #0f4c81;
     }
@@ -546,9 +546,13 @@ function addHomeStyles() {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 12px;
+      gap: 10px;
       cursor: pointer;
+      /* Ensure comfortable touch target */
+      min-height: 88px;
       transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     
     .quick-action-card:hover {
@@ -656,7 +660,7 @@ function addHomeStyles() {
     .news-feed-title strong.status-error { color: #dc2626; }
     
     .news-feed-time {
-      font-size: 10px;
+      font-size: var(--font-size-xs);
       color: var(--text-tertiary);
     }
     
@@ -701,9 +705,9 @@ function addHomeStyles() {
 
     .news-bulletin-tag {
       align-self: flex-start;
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 2px 6px;
+      padding: 2px 8px;
       border-radius: var(--radius-sm);
     }
 
@@ -740,9 +744,9 @@ function addHomeStyles() {
       gap: 4px;
       background: rgba(120, 53, 15, 0.12);
       color: #78350f;
-      padding: 3px 6px;
+      padding: 3px 8px;
       border-radius: var(--radius-sm);
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 600;
     }
   `;
