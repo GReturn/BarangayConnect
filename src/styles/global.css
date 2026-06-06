@@ -56,8 +56,6 @@ body::before {
   margin: 0 auto;
   background: var(--color-white);
   box-shadow: 0 0 32px rgba(0, 0, 0, 0.08);
-  border-left: 1px solid var(--border-default);
-  border-right: 1px solid var(--border-default);
 }
 
 #main-content {
@@ -69,12 +67,12 @@ body::before {
     Add safe area insets for notch / home indicator devices.
   */
   padding: var(--space-4);
-  padding-top: calc(54px + var(--space-4));
+  padding-top: 24px;
   padding-bottom: calc(64px + var(--space-4) + env(safe-area-inset-bottom, 0px));
 }
 
 #main-content.has-banner {
-  padding-top: calc(54px + var(--banner-height) + var(--space-4));
+  padding-top: calc(24px + var(--banner-height));
 }
 
 /* ---- Links ---- */
@@ -286,7 +284,7 @@ h6 { font-size: var(--font-size-sm); }
 @media (max-width: 480px) {
   #main-content {
     padding: var(--space-3);
-    padding-top: calc(54px + var(--space-3));
+    padding-top: 24px;
     padding-bottom: calc(64px + var(--space-3) + env(safe-area-inset-bottom, 0px));
   }
   #main-content.has-banner {
