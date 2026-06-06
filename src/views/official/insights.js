@@ -2,9 +2,9 @@
    BarangayConnect — Insights & Analytics View
    ============================================ */
 
-import store from '../store.js';
-import { getDocumentTypeLabel, getStatusInfo } from '../utils.js';
-import { t } from '../i18n.js';
+import store from '../../store.js';
+import { getDocumentTypeLabel, getStatusInfo } from '../../utils.js';
+import { t } from '../../i18n.js';
 
 const { STORES } = store;
 

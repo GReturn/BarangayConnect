@@ -2,9 +2,9 @@
    BarangayConnect — SMS Log View
    ============================================ */
 
-import sms from '../sms.js';
-import { formatDateTime, formatTimeAgo, escapeHTML } from '../utils.js';
-import { t } from '../i18n.js';
+import sms from '../../sms.js';
+import { formatDateTime, formatTimeAgo, escapeHTML } from '../../utils.js';
+import { t } from '../../i18n.js';
 
 export async function renderSMSLog() {
   const main = document.getElementById('main-content');

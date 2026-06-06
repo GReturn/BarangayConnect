@@ -2,16 +2,16 @@
    BarangayConnect — Official Review View
    ============================================ */
 
-import store from '../store.js';
-import auth from '../auth.js';
-import ledger from '../ledger.js';
-import sms from '../sms.js';
-import { showModal } from '../components/modal.js';
-import { showToast } from '../components/toast.js';
+import store from '../../store.js';
+import auth from '../../auth.js';
+import ledger from '../../ledger.js';
+import sms from '../../sms.js';
+import { showModal } from '../../components/modal.js';
+import { showToast } from '../../components/toast.js';
 import {
   getDocumentTypeLabel, getStatusInfo, formatDateTimeUTC, escapeHTML
-} from '../utils.js';
-import { t } from '../i18n.js';
+} from '../../utils.js';
+import { t } from '../../i18n.js';
 
 const { STORES } = store;
 

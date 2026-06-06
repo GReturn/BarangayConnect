@@ -2,10 +2,10 @@
    BarangayConnect — Profile & Settings View
    ============================================ */
 
-import auth from '../auth.js';
-import { generateQRCodeSVG, escapeHTML } from '../utils.js';
-import { showToast } from '../components/toast.js';
-import { t, setLocale, getLocale } from '../i18n.js';
+import auth from '../../auth.js';
+import { generateQRCodeSVG, escapeHTML } from '../../utils.js';
+import { showToast } from '../../components/toast.js';
+import { t, setLocale, getLocale } from '../../i18n.js';
 
 export async function renderProfile() {
   const main = document.getElementById('main-content');

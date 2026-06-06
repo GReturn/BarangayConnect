@@ -2,17 +2,17 @@
    BarangayConnect — Document Request Form View
    ============================================ */
 
-import auth from '../auth.js';
-import store from '../store.js';
-import ledger from '../ledger.js';
-import offline from '../offline.js';
-import sms from '../sms.js';
-import { showToast } from '../components/toast.js';
+import auth from '../../auth.js';
+import store from '../../store.js';
+import ledger from '../../ledger.js';
+import offline from '../../offline.js';
+import sms from '../../sms.js';
+import { showToast } from '../../components/toast.js';
 import {
   generateReferenceNumber, generateId, generateProxyToken, getProxyTokenExpiry,
   detectPriority, escapeHTML
-} from '../utils.js';
-import { t } from '../i18n.js';
+} from '../../utils.js';
+import { t } from '../../i18n.js';
 
 const { STORES } = store;
 

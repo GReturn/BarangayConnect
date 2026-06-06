@@ -2,15 +2,15 @@
    BarangayConnect — Status Tracker View
    ============================================ */
 
-import store from '../store.js';
-import ledger from '../ledger.js';
-import auth from '../auth.js';
+import store from '../../store.js';
+import ledger from '../../ledger.js';
+import auth from '../../auth.js';
 import {
   getDocumentTypeLabel, getStatusInfo, formatDateTime, formatTimeAgo,
   generateQRCodeSVG, escapeHTML
-} from '../utils.js';
-import { showToast } from '../components/toast.js';
-import { t } from '../i18n.js';
+} from '../../utils.js';
+import { showToast } from '../../components/toast.js';
+import { t } from '../../i18n.js';
 
 const { STORES } = store;
 

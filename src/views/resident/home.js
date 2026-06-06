@@ -2,13 +2,13 @@
    BarangayConnect — Home View (Resident)
    ============================================ */
 
-import auth from '../auth.js';
-import store from '../store.js';
-import offline from '../offline.js';
-import { formatTimeAgo, getStatusInfo, getDocumentTypeLabel, generateQRCodeSVG } from '../utils.js';
-import { showModal } from '../components/modal.js';
-import { showToast } from '../components/toast.js';
-import { t } from '../i18n.js';
+import auth from '../../auth.js';
+import store from '../../store.js';
+import offline from '../../offline.js';
+import { formatTimeAgo, getStatusInfo, getDocumentTypeLabel, generateQRCodeSVG } from '../../utils.js';
+import { showModal } from '../../components/modal.js';
+import { showToast } from '../../components/toast.js';
+import { t } from '../../i18n.js';
 
 const { STORES } = store;
 
@@ -153,13 +153,13 @@ export async function renderHome() {
       <!-- Section Title: News Bulletin -->
       <div class="section-header-compact mt-6">
         <h2 class="section-title-compact">${isOnline ? t('home.newsBulletin') : t('home.recentUpdates')}</h2>
-        <a href="#/sms-log" class="section-action-link">${t('home.viewAll')}</a>
+        <a href="#/bulletin" class="section-action-link">${t('home.viewAll')}</a>
       </div>
 
       <!-- Announcements List -->
       <div class="announcements-list stagger">
         ${newsItems.map(item => `
-          <div class="news-bulletin-card card">
+          <div class="news-bulletin-card card" style="cursor: pointer;">
             <div class="news-bulletin-image" style="background: ${item.imageBg}">
               <span class="news-bulletin-emoji">${item.imageEmoji}</span>
               ${item.isPendingSync ? `
@@ -209,6 +209,26 @@ export async function renderHome() {
   main.querySelectorAll('.news-feed-item').forEach(item => {
     item.addEventListener('click', () => {
       window.location.hash = `#/status/${item.dataset.requestId}`;
+    });
+  });
+
+  // Bind announcement card clicks to open detail modals
+  main.querySelectorAll('.news-bulletin-card').forEach((card, idx) => {
+    card.addEventListener('click', () => {
+      const item = newsItems[idx];
+      showModal({
+        title: item.title,
+        type: 'default',
+        body: `
+          <div style="display: flex; flex-direction: column; gap: var(--space-3); text-align: left;">
+            <div style="display: flex; align-items: center; gap: var(--space-2);">
+              <span class="badge ${item.isPendingSync ? 'badge-system' : 'badge-neutral'}">${item.tag}</span>
+            </div>
+            <p style="font-size: var(--font-size-base); color: var(--text-primary); line-height: 1.6; margin: 0;">${item.desc}</p>
+          </div>
+        `,
+        actions: [{ label: t('common.close'), class: 'btn-primary' }]
+      });
     });
   });
 }

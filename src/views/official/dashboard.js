@@ -2,10 +2,10 @@
    BarangayConnect — Official Dashboard View
    ============================================ */
 
-import store from '../store.js';
-import { getDocumentTypeLabel, getStatusInfo, formatTimeAgo, escapeHTML } from '../utils.js';
-import { showToast } from '../components/toast.js';
-import { t } from '../i18n.js';
+import store from '../../store.js';
+import { getDocumentTypeLabel, getStatusInfo, formatTimeAgo, escapeHTML } from '../../utils.js';
+import { showToast } from '../../components/toast.js';
+import { t } from '../../i18n.js';
 
 const { STORES } = store;
 

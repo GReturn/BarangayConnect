@@ -2,9 +2,9 @@
    BarangayConnect — SOS Response Centre View
    ============================================ */
 
-import { formatTimeAgo, escapeHTML } from '../utils.js';
-import { showToast } from '../components/toast.js';
-import { t } from '../i18n.js';
+import { formatTimeAgo, escapeHTML } from '../../utils.js';
+import { showToast } from '../../components/toast.js';
+import { t } from '../../i18n.js';
 
 export async function renderSOSDispatch() {
   const main = document.getElementById('main-content');
