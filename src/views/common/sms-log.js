@@ -2,8 +2,9 @@
    BarangayConnect — SMS Log View
    ============================================ */
 
-import sms from '../sms.js';
-import { formatDateTime, formatTimeAgo, escapeHTML } from '../utils.js';
+import sms from '../../sms.js';
+import { formatDateTime, formatTimeAgo, escapeHTML } from '../../utils.js';
+import { t } from '../../i18n.js';
 
 export async function renderSMSLog() {
   const main = document.getElementById('main-content');
@@ -11,21 +12,25 @@ export async function renderSMSLog() {
 
   const log = await sms.getSMSLog();
 
+  const badgeText = log.length === 1 
+    ? t('smsLog.messagesSingular') 
+    : t('smsLog.messagesPlural', { count: log.length });
+
   main.innerHTML = `
     <div class="sms-log-view animate-fade-in">
       <div class="form-back-row">
         <button class="btn btn-ghost btn-sm" id="sms-back-btn">
           <svg width="16" height="16" viewBox="0 0 16 16"><path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-          Balik
+          ${t('common.back')}
         </button>
       </div>
 
       <div class="section-header">
         <div>
-          <h1 style="font-size: var(--font-size-3xl);">📱 SMS Log</h1>
-          <p class="text-secondary mt-1">Tanan mga SMS notifications nga na-send</p>
+          <h1 style="font-size: var(--font-size-3xl);">${t('smsLog.title')}</h1>
+          <p class="text-secondary mt-1">${t('smsLog.subtitle')}</p>
         </div>
-        <span class="badge badge-neutral">${log.length} message${log.length !== 1 ? 's' : ''}</span>
+        <span class="badge badge-neutral">${badgeText}</span>
       </div>
 
       ${log.length > 0 ? `
@@ -45,7 +50,7 @@ export async function renderSMSLog() {
               </div>
               <div class="flex items-center justify-between mt-2">
                 <span class="text-xs text-tertiary">${formatDateTime(entry.sentAt)}</span>
-                <span class="badge badge-success text-xs">✓ Delivered</span>
+                <span class="badge badge-success text-xs">${t('smsLog.delivered')}</span>
               </div>
             </div>
           `).join('')}
@@ -53,8 +58,8 @@ export async function renderSMSLog() {
       ` : `
         <div class="empty-state mt-8">
           <div class="empty-state-icon">📱</div>
-          <div class="empty-state-title">Walay SMS messages</div>
-          <p class="text-sm text-secondary">Ang mga SMS notifications mo-appear diri.</p>
+          <div class="empty-state-title">${t('smsLog.emptyTitle')}</div>
+          <p class="text-sm text-secondary">${t('smsLog.emptySub')}</p>
         </div>
       `}
     </div>

@@ -2,16 +2,17 @@
    BarangayConnect — Document Request Form View
    ============================================ */
 
-import auth from '../auth.js';
-import store from '../store.js';
-import ledger from '../ledger.js';
-import offline from '../offline.js';
-import sms from '../sms.js';
-import { showToast } from '../components/toast.js';
+import auth from '../../auth.js';
+import store from '../../store.js';
+import ledger from '../../ledger.js';
+import offline from '../../offline.js';
+import sms from '../../sms.js';
+import { showToast } from '../../components/toast.js';
 import {
   generateReferenceNumber, generateId, generateProxyToken, getProxyTokenExpiry,
   detectPriority, escapeHTML
-} from '../utils.js';
+} from '../../utils.js';
+import { t } from '../../i18n.js';
 
 const { STORES } = store;
 
@@ -34,13 +35,13 @@ export async function renderRequestForm() {
       ${!isOnline ? `
         <div class="form-offline-bar">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.83-2.84M8.59 16.11a6 6 0 0 1 5.68-1.4M12 20h.01"></path></svg>
-          <span>Offline — request will submit when reconnected</span>
+          <span>${t('form.offlineBanner')}</span>
         </div>
       ` : ''}
 
       <div class="form-header">
-        <h1>Hangyo sa Dokumento</h1>
-        <p class="text-secondary mt-1">Document Request Form</p>
+        <h1>${t('form.title')}</h1>
+        <p class="text-secondary mt-1">${t('form.subtitle')}</p>
       </div>
 
       <form class="request-form card mt-4" id="request-form">
@@ -48,14 +49,14 @@ export async function renderRequestForm() {
         <div class="form-section">
           <div class="form-group">
             <label class="form-label font-bold flex items-center justify-between">
-              Tibuok Ngalan (Full Name)
+              ${t('form.fullName')}
               <span class="badge badge-verified">🛡️ PhilSys Verified</span>
             </label>
             <input type="text" class="form-input prefilled" value="${user ? escapeHTML(user.name) : ''}" readonly disabled id="field-name" />
           </div>
 
           <div class="form-group mt-3">
-            <label class="form-label font-bold">ID sa Residente (Resident ID)</label>
+            <label class="form-label font-bold">${t('form.residentId')}</label>
             <input type="text" class="form-input prefilled" value="${residentIdCode}" readonly disabled id="field-resident-id" />
           </div>
         </div>
@@ -65,9 +66,9 @@ export async function renderRequestForm() {
         <!-- Document Details -->
         <div class="form-section">
           <div class="form-group">
-            <label class="form-label font-bold" for="field-doc-type">Klase sa Dokumento (Document Type) *</label>
+            <label class="form-label font-bold" for="field-doc-type">${t('form.docType')}</label>
             <select class="form-select" id="field-doc-type" required>
-              <option value="">— Pilia ang klase sa dokumento —</option>
+              <option value="">${t('form.selectDoc')}</option>
               <option value="barangay_clearance">Barangay Clearance</option>
               <option value="indigency_certificate">Indigency Certificate</option>
               <option value="residency_certificate">Residence Cert.</option>
@@ -75,8 +76,8 @@ export async function renderRequestForm() {
           </div>
 
           <div class="form-group mt-3">
-            <label class="form-label font-bold" for="field-purpose">Katuyuan sa Hangyo (Purpose) *</label>
-            <textarea class="form-textarea" id="field-purpose" placeholder="Ipasabot ang rason sa hangyo..." required></textarea>
+            <label class="form-label font-bold" for="field-purpose">${t('form.purpose')}</label>
+            <textarea class="form-textarea" id="field-purpose" placeholder="${t('form.purposePlaceholder')}" required></textarea>
           </div>
         </div>
 
@@ -84,31 +85,46 @@ export async function renderRequestForm() {
 
         <!-- Priority Requests -->
         <div class="form-section">
-          <label class="form-label font-bold">Priority Request? <span>ℹ️</span></label>
+          <label class="form-label font-bold">${t('form.priorityReq')} <span>ℹ️</span></label>
           <div class="priority-banner mt-2 mb-3">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-            <span>Your request will be moved to the front of the queue.</span>
+            <span>${t('form.prioritySub')}</span>
           </div>
 
           <div class="priority-checkbox-group">
             <label class="priority-check-item">
               <input type="checkbox" id="flag-pwd" ${user?.isPWD ? 'checked' : ''} />
               <span class="custom-checkbox"></span>
-              <span>PWD (Person with Disability)</span>
+              <span>${t('form.pwdFlag')}</span>
             </label>
             
             <label class="priority-check-item">
               <input type="checkbox" id="flag-senior" ${user?.isSenior ? 'checked' : ''} />
               <span class="custom-checkbox"></span>
-              <span>Senior Citizen (60+)</span>
+              <span>${t('form.seniorFlag')}</span>
             </label>
             
             <label class="priority-check-item">
               <input type="checkbox" id="flag-pregnant" ${user?.isPregnant ? 'checked' : ''} />
               <span class="custom-checkbox"></span>
-              <span>Pregnant / Mabdos</span>
+              <span>${t('form.pregnantFlag')}</span>
             </label>
           </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Supporting Documents Upload -->
+        <div class="form-section">
+          <label class="form-label font-bold">${t('form.supportingDocs')}</label>
+          <span class="form-hint mb-2 block">${t('form.supportingDocsHint')}</span>
+          <div class="sig-upload-area" id="doc-dropzone" style="border: 2px dashed var(--border-strong); border-radius: var(--radius-md); padding: var(--space-5); display: flex; flex-direction: column; align-items: center; cursor: pointer; text-align: center; gap: 8px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <span class="text-xs text-secondary">${t('form.uploadArea')}</span>
+            <input type="file" id="doc-file-input" accept="image/*" style="display:none;" />
+          </div>
+          <!-- Uploaded files list -->
+          <div id="uploaded-files-preview" class="mt-3 flex gap-2" style="flex-wrap: wrap;"></div>
         </div>
 
         <div class="divider"></div>
@@ -116,20 +132,20 @@ export async function renderRequestForm() {
         <!-- Proxy Claiming -->
         <div class="form-section">
           <div class="toggle-wrapper" id="proxy-toggle-wrapper">
-            <span class="toggle-label font-bold">Ipa-kuha sa uban? (Proxy Claiming)</span>
+            <span class="toggle-label font-bold">${t('form.proxyClaim')}</span>
             <div class="toggle" id="proxy-toggle"></div>
           </div>
 
           <div id="proxy-fields" class="mt-3" style="display: none;">
             <div class="form-group">
-              <label class="form-label" for="field-proxy-name">Pangalan sa Proxy (Full name of proxy) *</label>
-              <input type="text" class="form-input" id="field-proxy-name" placeholder="Pangalan sa proxy representative" />
+              <label class="form-label" for="field-proxy-name">${t('form.proxyName')}</label>
+              <input type="text" class="form-input" id="field-proxy-name" placeholder="${t('form.proxyPlaceholder')}" />
             </div>
             
             <div class="form-group mt-3">
-              <label class="form-label" for="field-proxy-relationship">Relasyon / Relationship *</label>
+              <label class="form-label" for="field-proxy-relationship">${t('form.proxyRelation')}</label>
               <select class="form-select" id="field-proxy-relationship">
-                <option value="">— Pilia ang relasyon —</option>
+                <option value="">${t('form.selectRelation')}</option>
                 <option value="spouse">Spouse</option>
                 <option value="child">Child</option>
                 <option value="sibling">Sibling</option>
@@ -140,7 +156,7 @@ export async function renderRequestForm() {
 
             <div class="proxy-token-banner mt-3">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>A one-time token will be generated for your proxy.</span>
+              <span>${t('form.proxySub')}</span>
             </div>
           </div>
         </div>
@@ -150,12 +166,12 @@ export async function renderRequestForm() {
         <!-- Submit Panel -->
         <div class="form-submit">
           <button type="submit" class="btn ${isOnline ? 'btn-submit-request' : 'btn-queue-offline'} btn-lg w-full" id="submit-btn">
-            ${isOnline ? 'I-submit ang Request' : 'I-queue (Offline)'}
+            ${isOnline ? t('form.submitBtnOnline') : t('form.submitBtnOffline')}
           </button>
           
           <div class="tamper-proof-footer-note mt-3">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <span>Your submission will be logged in the barangay's tamper-proof ledger.</span>
+            <span>${t('form.ledgerNote')}</span>
           </div>
         </div>
       </form>
@@ -164,16 +180,16 @@ export async function renderRequestForm() {
       ${!isOnline ? `
         <div class="offline-info-container mt-4 stagger">
           <div class="offline-info-card card">
-            <h4 class="offline-card-title">🔍 Offline Queueing</h4>
-            <p class="offline-card-desc">Ang imong hangyo i-save sa app ug ipadala awtomatiko sa barangay inig balik sa internet.</p>
+            <h4 class="offline-card-title">${t('form.offlineQueueTitle')}</h4>
+            <p class="offline-card-desc">${t('form.offlineQueueDesc')}</p>
           </div>
           
           <div class="offline-info-card card mt-3">
             <div class="offline-card-header-with-img">
               <div class="offline-hall-placeholder">🏢</div>
               <div>
-                <h4 class="offline-card-title">Brgy. Guadalupe Services</h4>
-                <p class="offline-card-desc">Nagserbisyo kaninyo bisan wala'y internet connection. Priority namo ang inyong kasayon.</p>
+                <h4 class="offline-card-title">Barangay Guadalupe Services</h4>
+                <p class="offline-card-desc">${t('form.offlineServicePromo')}</p>
               </div>
             </div>
           </div>
@@ -182,8 +198,8 @@ export async function renderRequestForm() {
             <div class="offline-status-inner">
               <div class="offline-status-icon">📥</div>
               <div>
-                <h5 class="offline-status-title">Pending Documents</h5>
-                <p class="offline-status-desc">Naa kay <strong id="offline-pending-count">${queuedCount}</strong> ka hangyo nga nag-huwat sa connection.</p>
+                <h5 class="offline-status-title">${t('form.pendingDocsTitle')}</h5>
+                <p class="offline-status-desc">${t('form.pendingDocsDesc', { count: `<strong id="offline-pending-count">${queuedCount}</strong>` })}</p>
               </div>
             </div>
           </div>
@@ -192,7 +208,7 @@ export async function renderRequestForm() {
         <div class="online-info-banner notice notice-info mt-4">
           <span class="notice-icon">ℹ️</span>
           <div>
-            <strong>Pahibalo:</strong> Palihug hulata ang 1-3 ka adlaw sa pagproseso sa imong hangyo. Makadawat ka og pahibalo kon kini andam na.
+            ${t('form.onlineNotice')}
           </div>
         </div>
       `}
@@ -204,6 +220,48 @@ export async function renderRequestForm() {
 }
 
 function bindFormEvents(user, isOnline) {
+  // File attachments logic
+  const docDropzone = document.getElementById('doc-dropzone');
+  const docFileInput = document.getElementById('doc-file-input');
+  const previewContainer = document.getElementById('uploaded-files-preview');
+  let uploadedAttachments = [];
+
+  docDropzone?.addEventListener('click', () => docFileInput?.click());
+
+  docFileInput?.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target.result;
+        uploadedAttachments.push(base64);
+
+        const thumb = document.createElement('div');
+        thumb.className = 'attachment-thumbnail-preview animate-fade-in';
+        thumb.style.width = '64px';
+        thumb.style.height = '64px';
+        thumb.style.borderRadius = 'var(--radius-md)';
+        thumb.style.border = '1px solid var(--border-strong)';
+        thumb.style.overflow = 'hidden';
+        thumb.style.position = 'relative';
+        thumb.style.background = `url(${base64}) center/cover no-repeat`;
+
+        const delBtn = document.createElement('button');
+        delBtn.innerHTML = '×';
+        delBtn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:16px; height:16px; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold;';
+        delBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          uploadedAttachments = uploadedAttachments.filter(item => item !== base64);
+          thumb.remove();
+        });
+
+        thumb.appendChild(delBtn);
+        previewContainer?.appendChild(thumb);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
   // Proxy toggle
   const proxyToggle = document.getElementById('proxy-toggle');
   const proxyFields = document.getElementById('proxy-fields');
@@ -218,16 +276,16 @@ function bindFormEvents(user, isOnline) {
   // Form submit
   document.getElementById('request-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    await handleSubmit(user, isOnline, proxyEnabled);
+    await handleSubmit(user, isOnline, proxyEnabled, uploadedAttachments);
   });
 }
 
-async function handleSubmit(user, isOnline, proxyEnabled) {
+async function handleSubmit(user, isOnline, proxyEnabled, uploadedAttachments = []) {
   const docType = document.getElementById('field-doc-type')?.value;
   const purpose = document.getElementById('field-purpose')?.value;
 
   if (!docType || !purpose) {
-    showToast({ type: 'error', title: 'Missing Fields', message: 'Palihug pun-a ang required fields.' });
+    showToast({ type: 'error', title: 'Missing Fields', message: t('form.validationRequired') });
     return;
   }
 
@@ -235,14 +293,14 @@ async function handleSubmit(user, isOnline, proxyEnabled) {
     const proxyName = document.getElementById('field-proxy-name')?.value;
     const proxyRelationship = document.getElementById('field-proxy-relationship')?.value;
     if (!proxyName || !proxyRelationship) {
-      showToast({ type: 'error', title: 'Missing Proxy Info', message: 'Palihug pun-a ang proxy name ug relationship.' });
+      showToast({ type: 'error', title: 'Missing Proxy Info', message: t('form.validationProxy') });
       return;
     }
   }
 
   const submitBtn = document.getElementById('submit-btn');
   submitBtn.disabled = true;
-  submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
+  submitBtn.innerHTML = `<span class="spinner"></span> ${t('common.loading')}`;
 
   const isSenior = document.getElementById('flag-senior')?.checked;
   const isPWD = document.getElementById('flag-pwd')?.checked;
@@ -269,6 +327,7 @@ async function handleSubmit(user, isOnline, proxyEnabled) {
     proxyToken,
     proxyTokenExpiry: tokenExpiry,
     smsNotifications: true,
+    attachments: uploadedAttachments,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -344,7 +403,7 @@ async function handleSubmit(user, isOnline, proxyEnabled) {
 
   showToast({
     type: 'success',
-    title: isOnline ? 'Hangyo Na-submit!' : 'Na-queue ang Hangyo!',
+    title: isOnline ? t('form.toastSuccessOnline') : t('form.toastSuccessOffline'),
     message: `Reference: ${referenceNumber}`,
     duration: 4000
   });

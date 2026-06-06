@@ -1,5 +1,6 @@
 /* ============================================
    BarangayConnect — Component Styles
+   Mobile-First Standards Applied
    ============================================ */
 
 /* ---- Glass Card ---- */
@@ -41,12 +42,14 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
+  /* Minimum 44px height for touch targets (WCAG 2.5.5) */
+  min-height: 44px;
+  padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-lg);
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
-  line-height: 1;
+  line-height: 1.2;
   cursor: pointer;
   border: none;
   transition: all var(--duration-normal) var(--ease-out);
@@ -54,6 +57,9 @@
   user-select: none;
   position: relative;
   overflow: hidden;
+  /* Prevent tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .btn::after {
@@ -118,26 +124,40 @@
   border-color: var(--border-strong);
 }
 
+/* Small button — still meets 36px min for secondary actions */
 .btn-sm {
+  min-height: 36px;
   padding: var(--space-2) var(--space-4);
   font-size: var(--font-size-sm);
   border-radius: var(--radius-md);
 }
 
+/* Large button — prominent CTAs */
 .btn-lg {
+  min-height: 52px;
   padding: var(--space-4) var(--space-8);
   font-size: var(--font-size-md);
   border-radius: var(--radius-xl);
 }
 
+/* Icon-only button — 44x44 tap target */
 .btn-icon {
-  padding: var(--space-3);
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--space-2);
   border-radius: var(--radius-lg);
+}
+
+/* Full-width button utility */
+.btn-block {
+  width: 100%;
+  justify-content: center;
 }
 
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  pointer-events: none;
   transform: none;
 }
 
@@ -152,53 +172,55 @@
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing-wide);
   white-space: nowrap;
+  /* Minimum 20px height for readability */
+  min-height: 20px;
 }
 
 .badge-accent {
   background: rgba(0, 201, 167, 0.15);
-  color: var(--color-accent-400);
+  color: var(--color-accent-700);
   border: 1px solid rgba(0, 201, 167, 0.25);
 }
 
 .badge-success {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--color-success-400);
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-success-700);
   border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.15);
-  color: var(--color-warning-400);
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--color-warning-700);
   border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .badge-error {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--color-error-400);
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-error-700);
   border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
 .badge-system {
-  background: rgba(139, 92, 246, 0.15);
-  color: var(--color-system-400);
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--color-system-700);
   border: 1px solid rgba(139, 92, 246, 0.25);
 }
 
 .badge-neutral {
-  background: rgba(107, 114, 128, 0.15);
-  color: var(--color-neutral-400);
+  background: rgba(107, 114, 128, 0.12);
+  color: var(--color-neutral-700);
   border: 1px solid rgba(107, 114, 128, 0.25);
 }
 
 .badge-verified {
-  background: rgba(0, 201, 167, 0.15);
-  color: var(--color-accent-400);
+  background: rgba(0, 201, 167, 0.12);
+  color: var(--color-accent-700);
   border: 1px solid rgba(0, 201, 167, 0.3);
 }
 
 .badge-priority {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--color-success-300);
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-success-700);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
@@ -220,13 +242,16 @@
 .form-select,
 .form-textarea {
   width: 100%;
+  /* Minimum 44px for comfortable touch input */
+  min-height: 44px;
   padding: var(--space-3) var(--space-4);
   background: var(--bg-input);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   color: var(--text-primary);
   font-family: var(--font-family);
-  font-size: var(--font-size-base);
+  /* Minimum 16px to prevent iOS auto-zoom on focus */
+  font-size: 16px;
   transition: all var(--duration-fast) var(--ease-out);
 }
 
@@ -259,18 +284,21 @@
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%239ca3af' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
+  background-position: right 14px center;
+  padding-right: 40px;
 }
 
 .form-textarea {
-  min-height: 80px;
+  min-height: 88px;
   resize: vertical;
+  /* Override min-height from form controls */
+  font-size: 16px;
 }
 
 .form-hint {
   font-size: var(--font-size-xs);
   color: var(--text-tertiary);
+  line-height: 1.4;
 }
 
 /* ---- Toggle Switch ---- */
@@ -279,13 +307,15 @@
   align-items: center;
   gap: var(--space-3);
   cursor: pointer;
+  /* Minimum tap area */
+  min-height: 44px;
 }
 
 .toggle {
   position: relative;
   width: 44px;
   height: 24px;
-  background: var(--color-neutral-700);
+  background: var(--color-neutral-300);
   border-radius: var(--radius-full);
   transition: background var(--duration-normal) var(--ease-out);
   flex-shrink: 0;
@@ -322,7 +352,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
-  padding: var(--space-4);
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-lg);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
@@ -335,33 +365,33 @@
 }
 
 .notice-success {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.2);
-  color: var(--color-success-300);
+  color: var(--color-success-700);
 }
 
 .notice-warning {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(245, 158, 11, 0.08);
   border: 1px solid rgba(245, 158, 11, 0.2);
-  color: var(--color-warning-300);
+  color: var(--color-warning-700);
 }
 
 .notice-error {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  color: var(--color-error-300);
+  color: var(--color-error-700);
 }
 
 .notice-info {
-  background: rgba(0, 201, 167, 0.1);
-  border: 1px solid rgba(0, 201, 167, 0.2);
-  color: var(--color-accent-300);
+  background: rgba(15, 76, 129, 0.06);
+  border: 1px solid rgba(15, 76, 129, 0.15);
+  color: var(--color-primary-600);
 }
 
 .notice-system {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(139, 92, 246, 0.08);
   border: 1px solid rgba(139, 92, 246, 0.2);
-  color: var(--color-system-300);
+  color: var(--color-system-700);
 }
 
 /* ---- Pipeline / Stepper ---- */
@@ -369,7 +399,7 @@
   display: flex;
   align-items: center;
   gap: 0;
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-4) var(--space-3);
 }
 
 .pipeline-step {
@@ -383,13 +413,13 @@
 }
 
 .pipeline-step-dot {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   border: 2px solid var(--border-default);
   background: var(--bg-surface-solid);
@@ -417,8 +447,9 @@
 .pipeline-step-label {
   font-size: var(--font-size-xs);
   color: var(--text-tertiary);
-  max-width: 100px;
+  max-width: 80px;
   transition: color var(--duration-normal);
+  line-height: 1.3;
 }
 
 .pipeline-step.done .pipeline-step-label,
@@ -430,8 +461,8 @@
   flex: 1;
   height: 2px;
   background: var(--border-default);
-  margin: 0 -8px;
-  margin-bottom: 28px;
+  margin: 0 -6px;
+  margin-bottom: 26px;
   position: relative;
   z-index: 1;
 }
@@ -442,6 +473,35 @@
 
 .pipeline-connector.active {
   background: linear-gradient(90deg, var(--color-success-500) 0%, var(--color-accent-500) 100%);
+}
+
+/* Mobile pipeline — vertical stack */
+@media (max-width: 480px) {
+  .pipeline {
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+    padding: var(--space-3);
+  }
+
+  .pipeline-step {
+    flex-direction: row;
+    text-align: left;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+  }
+
+  .pipeline-connector {
+    width: 2px;
+    height: 20px;
+    margin: 0;
+    margin-left: 17px;
+    margin-bottom: 0;
+  }
+
+  .pipeline-step-label {
+    max-width: none;
+  }
 }
 
 /* ---- Data Table ---- */
@@ -456,7 +516,7 @@
 }
 
 .data-table th {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-3);
   text-align: left;
   font-weight: var(--font-weight-semibold);
   color: var(--text-secondary);
@@ -467,9 +527,10 @@
 }
 
 .data-table td {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-3);
   color: var(--text-primary);
   border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--font-size-sm);
 }
 
 .data-table tbody tr {
@@ -492,13 +553,20 @@
   border-left: 3px solid var(--color-success-500);
 }
 
+/* Scrollable table wrapper for mobile */
+.table-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+}
+
 /* ---- Metric Card ---- */
 .metric-card {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
-  padding: var(--space-5);
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -517,19 +585,21 @@
   color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wider);
+  line-height: 1.3;
 }
 
 .metric-card-value {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: var(--letter-spacing-tight);
   animation: countUp var(--duration-slow) var(--ease-out) both;
+  line-height: 1.1;
 }
 
-.metric-card-value.accent { color: var(--color-accent-400); }
-.metric-card-value.warning { color: var(--color-warning-400); }
-.metric-card-value.success { color: var(--color-success-400); }
-.metric-card-value.error { color: var(--color-error-400); }
+.metric-card-value.accent  { color: var(--color-accent-700); }
+.metric-card-value.warning { color: var(--color-warning-700); }
+.metric-card-value.success { color: var(--color-success-700); }
+.metric-card-value.error   { color: var(--color-error-700); }
 
 /* ---- Empty State ---- */
 .empty-state {
@@ -537,19 +607,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-16) var(--space-6);
+  padding: var(--space-12) var(--space-6);
   text-align: center;
   color: var(--text-tertiary);
 }
 
 .empty-state-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: var(--space-4);
   opacity: 0.5;
 }
 
 .empty-state-title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   color: var(--text-secondary);
   margin-bottom: var(--space-2);
@@ -560,11 +630,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
 .section-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
 }
 
@@ -573,7 +645,7 @@
   width: 100%;
   height: 1px;
   background: var(--border-subtle);
-  margin: var(--space-6) 0;
+  margin: var(--space-4) 0;
 }
 
 /* ---- Avatar ---- */
@@ -589,12 +661,25 @@
   color: var(--text-on-accent);
   background: var(--gradient-accent);
   flex-shrink: 0;
+  /* Ensure tap target is comfortable */
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .avatar-lg {
   width: 48px;
   height: 48px;
+  min-width: 48px;
+  min-height: 48px;
   font-size: var(--font-size-md);
+}
+
+.avatar-xl {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  min-height: 64px;
+  font-size: var(--font-size-xl);
 }
 
 /* ---- Spinner ---- */
@@ -612,35 +697,43 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-6);
+  gap: var(--space-2);
+  padding: var(--space-4);
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
   cursor: pointer;
   transition: all var(--duration-normal) var(--ease-out);
   text-align: center;
+  /* Comfortable tap target */
+  min-height: 80px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .quick-action:hover {
   background: var(--bg-card-hover);
   border-color: var(--border-default);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-xl), var(--shadow-glow-accent);
 }
 
+.quick-action:active {
+  transform: translateY(0) scale(0.97);
+}
+
 .quick-action-icon {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   background: var(--gradient-accent);
   color: var(--text-on-accent);
   transition: transform var(--duration-normal) var(--ease-spring);
+  flex-shrink: 0;
 }
 
 .quick-action:hover .quick-action-icon {
@@ -651,41 +744,96 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
+  line-height: 1.3;
 }
 
 .quick-action-desc {
   font-size: var(--font-size-xs);
   color: var(--text-tertiary);
+  line-height: 1.3;
 }
 
-/* ---- Responsive adjustments ---- */
-@media (max-width: 768px) {
-  .pipeline {
+/* ---- Page Header ---- */
+.page-header {
+  margin-bottom: var(--space-4);
+}
+
+.page-header h1, .page-header h2 {
+  margin-bottom: var(--space-1);
+}
+
+.page-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  line-height: var(--line-height-normal);
+}
+
+/* ---- Action Row (button groups) ---- */
+/* Use for rows of action buttons — stacks on mobile */
+.action-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.action-row .btn {
+  flex: 1;
+  min-width: 120px;
+}
+
+@media (max-width: 360px) {
+  .action-row {
     flex-direction: column;
-    gap: 0;
-    align-items: stretch;
   }
+  .action-row .btn {
+    width: 100%;
+  }
+}
 
-  .pipeline-step {
-    flex-direction: row;
-    text-align: left;
-    gap: var(--space-3);
-    padding: var(--space-2) 0;
-  }
+/* ---- Filter Chips ---- */
+.chip-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: var(--space-1);
+}
 
-  .pipeline-connector {
-    width: 2px;
-    height: 24px;
-    margin: 0;
-    margin-left: 19px;
-    margin-bottom: 0;
-  }
+.chip-row::-webkit-scrollbar {
+  display: none;
+}
 
-  .pipeline-step-label {
-    max-width: none;
-  }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  /* Min 36px height for comfortable tap */
+  min-height: 36px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  border: 1.5px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  transition: all var(--duration-fast);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  flex-shrink: 0;
+}
 
-  .metric-card-value {
-    font-size: var(--font-size-2xl);
-  }
+.chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.chip.active {
+  background: var(--gradient-accent);
+  border-color: transparent;
+  color: var(--color-white);
+  font-weight: var(--font-weight-semibold);
 }

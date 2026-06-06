@@ -2,15 +2,16 @@
    BarangayConnect — Official Review View
    ============================================ */
 
-import store from '../store.js';
-import auth from '../auth.js';
-import ledger from '../ledger.js';
-import sms from '../sms.js';
-import { showModal } from '../components/modal.js';
-import { showToast } from '../components/toast.js';
+import store from '../../store.js';
+import auth from '../../auth.js';
+import ledger from '../../ledger.js';
+import sms from '../../sms.js';
+import { showModal } from '../../components/modal.js';
+import { showToast } from '../../components/toast.js';
 import {
   getDocumentTypeLabel, getStatusInfo, formatDateTimeUTC, escapeHTML
-} from '../utils.js';
+} from '../../utils.js';
+import { t } from '../../i18n.js';
 
 const { STORES } = store;
 
@@ -23,8 +24,8 @@ export async function renderReview(requestId) {
     main.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">🔍</div>
-        <div class="empty-state-title">Request not found</div>
-        <button class="btn btn-ghost mt-4" onclick="window.location.hash='#/dashboard'">← Back to Dashboard</button>
+        <div class="empty-state-title">${t('review.notFound')}</div>
+        <button class="btn btn-ghost mt-4" onclick="window.location.hash='#/dashboard'">← ${t('common.back')}</button>
       </div>
     `;
     return;
@@ -57,14 +58,14 @@ export async function renderReview(requestId) {
       ${isApproved ? `
         <div class="review-status-banner banner-success animate-fade-in-down">
           <span class="banner-status-icon">✓</span>
-          <span>Approved — ${escapeHTML(request.residentName)} notified via SMS</span>
+          <span>${t('review.approvedAlert', { name: escapeHTML(request.residentName) })}</span>
         </div>
       ` : ''}
 
       ${isRejected ? `
         <div class="review-status-banner banner-danger animate-fade-in-down">
           <span class="banner-status-icon">❌</span>
-          <span>Rejected — ${escapeHTML(request.residentName)} notified via SMS</span>
+          <span>${t('review.rejectedAlert', { name: escapeHTML(request.residentName) })}</span>
         </div>
       ` : ''}
 
@@ -80,17 +81,17 @@ export async function renderReview(requestId) {
 
         <div class="review-fields-grid mt-4">
           <div class="review-field-row">
-            <span class="review-field-lbl">APPLICANT</span>
+            <span class="review-field-lbl">${t('review.applicantLabel')}</span>
             <span class="review-field-val font-semibold">${escapeHTML(request.residentName)}</span>
           </div>
           
           <div class="review-field-row mt-3">
-            <span class="review-field-lbl">DATE FILED</span>
+            <span class="review-field-lbl">${t('status.dateFiled').toUpperCase()}</span>
             <span class="review-field-val">${dateFiled}</span>
           </div>
 
           <div class="review-field-row mt-3">
-            <span class="review-field-lbl">PURPOSE</span>
+            <span class="review-field-lbl">${t('form.purpose').replace(' *', '').toUpperCase()}</span>
             <span class="review-field-val font-italic">"${escapeHTML(request.purpose)}"</span>
           </div>
         </div>
@@ -99,43 +100,37 @@ export async function renderReview(requestId) {
         ${!isApproved && !isRejected ? `
           <div class="divider"></div>
           <div class="form-group mt-2">
-            <label class="form-label font-bold" for="review-remarks">Remarks (optional)</label>
-            <span class="form-hint mb-2 block">Mga obserbasyon o pahinumdom</span>
-            <textarea class="form-textarea" id="review-remarks" placeholder="Add a note for the resident or for the record..."></textarea>
+            <label class="form-label font-bold" for="review-remarks">${t('review.remarksLabel')}</label>
+            <span class="form-hint mb-2 block">${t('review.remarksHint')}</span>
+            <textarea class="form-textarea" id="review-remarks" placeholder="${t('review.remarksPlaceholder')}"></textarea>
           </div>
 
           <div class="esignature-alert-banner mt-3">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            <span>Your approval constitutes a legally binding digital signature under RA 8792 (E-Commerce Act). No physical signature or presence required.</span>
+            <span>${t('review.esignNote')}</span>
           </div>
 
-          <!-- Approve/Reject buttons -->
-          <div class="review-actions-row flex gap-3 mt-4">
-            <button class="btn btn-approve-action w-full" id="btn-review-approve">I-approve</button>
-            <button class="btn btn-reject-action w-full" id="btn-review-reject">I-reject</button>
+          <!-- Approve/Reject buttons — stack vertically on mobile -->
+          <div class="review-actions-row mt-4">
+            <button class="btn btn-approve-action w-full" id="btn-review-approve">${t('review.approveBtn')}</button>
+            <button class="btn btn-reject-action w-full mt-2" id="btn-review-reject">${t('review.rejectBtn')}</button>
           </div>
         ` : ''}
       </div>
 
       <!-- Image Attachments Section -->
       <div class="card review-attachments-card mt-4">
-        <h3 class="font-bold mb-3">Attachments</h3>
+        <h3 class="font-bold mb-3">${t('review.attachmentsTitle')}</h3>
         <div class="attachments-grid">
-          <!-- Attachment Slot 1: Thumbnail -->
-          <div class="attachment-slot slot-filled">
-            <div class="attachment-thumb-icon">📄</div>
-            <div class="attachment-thumb-overlay">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          ${request.attachments && request.attachments.length > 0 ? request.attachments.map((base64, idx) => `
+            <div class="attachment-slot slot-filled clickable-attachment" data-attachment-index="${idx}" style="background: url(${base64}) center/cover no-repeat;">
+              <div class="attachment-thumb-overlay">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </div>
             </div>
-          </div>
-          
-          <!-- Attachment Slot 2: Add plus -->
-          <div class="attachment-slot slot-upload-dashed">
-            <div class="upload-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-              <span class="upload-plus">+</span>
-            </div>
-          </div>
+          `).join('') : `
+            <p class="text-xs text-tertiary">${t('review.noAttachments')}</p>
+          `}
         </div>
       </div>
 
@@ -145,12 +140,12 @@ export async function renderReview(requestId) {
           <div class="sms-alert-header flex items-center gap-2">
             <span class="sms-alert-icon">✉️</span>
             <div>
-              <span class="sms-alert-title block">SMS Notification Sent</span>
-              <span class="sms-alert-status">Delivered</span>
+              <span class="sms-alert-title block">${t('review.smsLogTitle')}</span>
+              <span class="sms-alert-status">${t('review.smsDelivered')}</span>
             </div>
           </div>
           <div class="sms-alert-body mt-3">
-            <span class="sms-alert-phone block">Notification delivered to resident's registered number</span>
+            <span class="sms-alert-phone block">${t('review.smsDeliveredSub')}</span>
             <span class="sms-alert-phone font-bold mt-1">${escapeHTML(auth.getCurrentUser()?.phone || '+63 917 123 4567')}</span>
             <div class="sms-message-bubble mt-3 font-italic">
               "${escapeHTML(smsLog[smsLog.length - 1].message)}"
@@ -164,7 +159,7 @@ export async function renderReview(requestId) {
       <div class="card review-audit-card mt-4">
         <h3 class="font-bold flex items-center gap-2">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Audit Trail
+          ${t('review.auditTitle')}
         </h3>
         
         <div class="audit-trail-table-container mt-3">
@@ -172,19 +167,19 @@ export async function renderReview(requestId) {
             <thead>
               <tr>
                 <th></th>
-                <th>STEP</th>
-                <th>ACTION</th>
-                <th>ACTOR</th>
-                <th>TIMESTAMP</th>
+                <th>${t('review.auditStep')}</th>
+                <th>${t('review.auditAction')}</th>
+                <th>${t('review.auditActor')}</th>
+                <th>${t('review.auditTimestamp')}</th>
               </tr>
             </thead>
             <tbody>
               ${entries.map((entry, idx) => {
-                let actionStr = 'Request Submitted';
-                if (entry.action === 'received') actionStr = 'Received by Secretary';
-                else if (entry.action === 'under_review') actionStr = 'Reviewed by Captain';
-                else if (entry.action === 'approved') actionStr = 'Approved & Signed';
-                else if (entry.action === 'rejected') actionStr = 'Rejected';
+                let actionStr = t('status.stepSubmitted');
+                if (entry.action === 'received') actionStr = t('status.stepReceivedSec');
+                else if (entry.action === 'under_review') actionStr = t('status.stepApprovedNode');
+                else if (entry.action === 'approved') actionStr = t('status.stepApprovedDesc');
+                else if (entry.action === 'rejected') actionStr = t('status.stepRejected');
 
                 return `
                   <tr>
@@ -202,10 +197,10 @@ export async function renderReview(requestId) {
 
         <!-- Hash block at bottom -->
         <div class="audit-hash-block mt-4">
-          <span class="hash-label block font-semibold" style="font-family: monospace; font-size: 10px; word-break: break-all; color: #047857;">
-            ${prevHash.substring(0, 32)} HASH: ${currentHash.substring(0, 32)} — Verified ✓
+          <span class="hash-label block font-semibold" style="font-family: monospace; font-size: var(--font-size-xs); word-break: break-all; color: #047857; line-height: 1.5;">
+            ${prevHash.substring(0, 32)} HASH: ${currentHash.substring(0, 32)} — ${t('review.hashVerified')}
           </span>
-          <p class="hash-info mt-2">This audit trail is permanently recorded on the BarangayConnect tamper-proof ledger and cannot be modified by any official.</p>
+          <p class="hash-info mt-2">${t('review.auditDesc')}</p>
         </div>
       </div>
 
@@ -213,6 +208,15 @@ export async function renderReview(requestId) {
   `;
 
   addReviewStyles();
+
+  // Bind clickable attachments for Lightbox
+  main.querySelectorAll('.clickable-attachment').forEach(item => {
+    item.addEventListener('click', () => {
+      const idx = parseInt(item.dataset.attachmentIndex, 10);
+      const base64 = request.attachments[idx];
+      showAttachmentLightbox(base64);
+    });
+  });
 
   // Bind approval events
   document.getElementById('btn-review-approve')?.addEventListener('click', () => {
@@ -226,25 +230,67 @@ export async function renderReview(requestId) {
   });
 }
 
+function showAttachmentLightbox(base64) {
+  let zoom = 1;
+  let rotation = 0;
+
+  const updateTransform = () => {
+    const img = document.getElementById('lightbox-img');
+    if (img) {
+      img.style.transform = `scale(${zoom}) rotate(${rotation}deg)`;
+    }
+  };
+
+  showModal({
+    title: t('review.attachmentsTitle'),
+    body: `
+      <div class="lightbox-modal-content flex flex-col items-center">
+        <div class="lightbox-img-frame" style="width:100%; height:240px; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; background:#0f172a;">
+          <img id="lightbox-img" src="${base64}" alt="Attachment" style="max-width:100%; max-height:100%; object-fit:contain; transition: transform 0.2s;" />
+        </div>
+        <div class="lightbox-toolbar flex gap-2 mt-4" style="justify-content:center; flex-wrap: wrap;">
+          <button class="btn btn-ghost btn-sm" id="btn-zoom-in">🔍+ Zoom In</button>
+          <button class="btn btn-ghost btn-sm" id="btn-zoom-out">🔍- Zoom Out</button>
+          <button class="btn btn-ghost btn-sm" id="btn-rotate">🔄 Rotate</button>
+        </div>
+      </div>
+    `,
+    actions: [{ label: t('common.close'), class: 'btn-primary' }]
+  });
+
+  document.getElementById('btn-zoom-in')?.addEventListener('click', () => {
+    zoom += 0.25;
+    updateTransform();
+  });
+  document.getElementById('btn-zoom-out')?.addEventListener('click', () => {
+    if (zoom > 0.5) zoom -= 0.25;
+    updateTransform();
+  });
+  document.getElementById('btn-rotate')?.addEventListener('click', () => {
+    rotation = (rotation + 90) % 360;
+    updateTransform();
+  });
+}
+
 function showConfirmApprovalModal(request, remarks) {
   showModal({
-    title: 'Confirm Approval',
+    title: t('review.confirmApprovalTitle'),
     type: 'default',
     body: `
       <div class="confirm-modal-inner flex flex-col items-center text-center">
         <div class="confirm-icon-box">✓</div>
-        <h3 class="confirm-title font-bold mt-3">Confirm Approval</h3>
-        <p class="confirm-desc mt-2">This action will be recorded in the tamper-proof ledger and cannot be undone.</p>
+        <h3 class="confirm-title font-bold mt-3">${t('review.confirmApprovalTitle')}</h3>
+        <p class="confirm-desc mt-2">${t('review.confirmApprovalDesc')}</p>
       </div>
     `,
     actions: [
       {
-        label: 'Confirm',
+        label: t('common.confirm'),
         class: 'btn-confirm-approve w-full',
         onClick: () => handleApprove(request, remarks)
       },
       {
-        label: 'Cancel',
+        label: t('common.cancel'),
         class: 'btn-confirm-cancel w-full'
       }
     ]
@@ -290,16 +336,16 @@ async function handleApprove(request, remarks) {
 
 async function handleReject(request, remarks) {
   showModal({
-    title: 'Reject Request?',
+    title: t('review.rejectConfirmTitle'),
     type: 'danger',
     body: `
-      <p>Are you sure you want to reject the request from <strong>${escapeHTML(request.residentName)}</strong>?</p>
-      <p class="mt-2 text-sm text-secondary">This rejection will be recorded in the tamper-proof ledger.</p>
+      <p>${t('review.rejectConfirmDesc', { name: `<strong>${escapeHTML(request.residentName)}</strong>` })}</p>
+      <p class="mt-2 text-sm text-secondary">${t('review.ledgerDescShort')}</p>
     `,
     actions: [
-      { label: 'Cancel', class: 'btn-ghost' },
+      { label: t('common.cancel'), class: 'btn-ghost' },
       {
-        label: '❌ Reject',
+        label: `❌ ${t('review.rejectBtn')}`,
         class: 'btn-danger',
         onClick: async () => {
           const official = auth.getCurrentUser();
@@ -324,7 +370,7 @@ async function handleReject(request, remarks) {
             requestId: request.id
           });
 
-          showToast({ type: 'error', title: 'Rejected', message: `${request.residentName} notified.` });
+          showToast({ type: 'error', title: t('review.rejectBtn'), message: `${request.residentName} notified.` });
           renderReview(request.id);
         }
       }
@@ -431,7 +477,7 @@ function addReviewStyles() {
       color: #0f4c81;
       border-radius: var(--radius-md);
       padding: var(--space-3);
-      font-size: 11px;
+      font-size: var(--font-size-sm);
       display: flex;
       align-items: flex-start;
       gap: 8px;
@@ -596,6 +642,7 @@ function addReviewStyles() {
 
     .audit-trail-table-container {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .audit-trail-table {
@@ -639,7 +686,7 @@ function addReviewStyles() {
     }
 
     .hash-info {
-      font-size: 9px;
+      font-size: var(--font-size-xs);
       color: #166534;
       line-height: 1.4;
       margin: 0;

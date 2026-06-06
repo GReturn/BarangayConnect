@@ -2,21 +2,36 @@
    BarangayConnect — Hash Router
    ============================================ */
 
-import { renderHome } from './views/home.js';
-import { renderRequestForm } from './views/request-form.js';
-import { renderStatusTracker } from './views/status-tracker.js';
-import { renderDashboard } from './views/dashboard.js';
-import { renderReview } from './views/review.js';
-import { renderSMSLog } from './views/sms-log.js';
+import { renderHome } from './views/resident/home.js';
+import { renderRequestForm } from './views/resident/request-form.js';
+import { renderStatusTracker } from './views/resident/status-tracker.js';
+import { renderDashboard } from './views/official/dashboard.js';
+import { renderReview } from './views/official/review.js';
+import { renderSMSLog } from './views/common/sms-log.js';
+import { renderProfile } from './views/common/profile.js';
+import { renderSOSDispatch } from './views/official/sos-dispatch.js';
+import { renderLedgerExplorer } from './views/common/ledger-explorer.js';
+import { renderInsights } from './views/official/insights.js';
+import { renderBulletin } from './views/common/bulletin.js';
 import { stopSLATimers } from './components/sla-timer.js';
 
 const routes = [
   { pattern: /^#?\/?$/, handler: () => renderHome() },
   { pattern: /^#\/request$/, handler: () => renderRequestForm() },
-  { pattern: /^#\/status\/(.+)$/, handler: (match) => renderStatusTracker(match[1]) },
+  { pattern: /^#\/status$/, handler: () => renderStatusTracker(null) },
+  { pattern: /^#\/status\/(.+)$/, handler: (match) => {
+    // 'req' is a sentinel used in navbar links meaning "show my status list"
+    const id = match[1] === 'req' ? null : match[1];
+    renderStatusTracker(id);
+  }},
   { pattern: /^#\/dashboard$/, handler: () => renderDashboard() },
   { pattern: /^#\/review\/(.+)$/, handler: (match) => renderReview(match[1]) },
   { pattern: /^#\/sms-log$/, handler: () => renderSMSLog() },
+  { pattern: /^#\/profile$/, handler: () => renderProfile() },
+  { pattern: /^#\/sos-dispatch$/, handler: () => renderSOSDispatch() },
+  { pattern: /^#\/ledger-explorer$/, handler: () => renderLedgerExplorer() },
+  { pattern: /^#\/insights$/, handler: () => renderInsights() },
+  { pattern: /^#\/bulletin$/, handler: () => renderBulletin() },
 ];
 
 function navigateTo(hash) {
