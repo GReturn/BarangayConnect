@@ -5,6 +5,7 @@
 import auth from '../auth.js';
 import { generateQRCodeSVG, escapeHTML } from '../utils.js';
 import { showToast } from '../components/toast.js';
+import { t, setLocale, getLocale } from '../i18n.js';
 
 export async function renderProfile() {
   const main = document.getElementById('main-content');
@@ -34,6 +35,7 @@ export async function renderProfile() {
 function renderResidentProfile(main, user) {
   const initials = auth.getUserInitials();
   const qrCodeSvg = generateQRCodeSVG(user.philsysId || 'BRGY-CONNECT', 120);
+  const currentLang = getLocale();
 
   // Load local settings
   let smsEnabled = localStorage.getItem(`brgyconnect_sms_pref_${user.id}`) !== 'false';
@@ -47,7 +49,7 @@ function renderResidentProfile(main, user) {
         </div>
         <div>
           <h1 class="profile-name font-bold" style="font-size: var(--font-size-2xl);">${escapeHTML(user.name)}</h1>
-          <span class="badge badge-verified mt-1">🛡️ PhilSys Verified Resident</span>
+          <span class="badge badge-verified mt-1">🛡️ ${t('home.verifiedResident')}</span>
         </div>
       </div>
 
@@ -55,29 +57,29 @@ function renderResidentProfile(main, user) {
       <div class="card philsys-id-details-card mt-5">
         <h3 class="font-bold flex items-center gap-2 mb-3">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          PhilSys Verified Information
+          ${t('profile.philsysCardTitle')}
         </h3>
         <div class="profile-fields-grid mt-2">
           <div class="profile-field-row">
-            <span class="profile-field-lbl">NATIONAL ID (PSN)</span>
+            <span class="profile-field-lbl">${t('profile.nationalId')}</span>
             <span class="profile-field-val font-semibold" style="font-family: monospace;">${escapeHTML(user.philsysId)}</span>
           </div>
           <div class="profile-field-row mt-3">
-            <span class="profile-field-lbl">COMPLETE ADDRESS</span>
+            <span class="profile-field-lbl">${t('profile.address')}</span>
             <span class="profile-field-val">${escapeHTML(user.address)}</span>
           </div>
           <div class="profile-fields-inline mt-3">
             <div class="profile-field-row">
-              <span class="profile-field-lbl">DATE OF BIRTH</span>
+              <span class="profile-field-lbl">${t('profile.dob')}</span>
               <span class="profile-field-val">${escapeHTML(user.dateOfBirth)}</span>
             </div>
             <div class="profile-field-row">
-              <span class="profile-field-lbl">AGE</span>
-              <span class="profile-field-val">${escapeHTML(user.age)} years old</span>
+              <span class="profile-field-lbl">${t('profile.age')}</span>
+              <span class="profile-field-val">${escapeHTML(user.age)} ${t('profile.age').toLowerCase() === 'age' ? 'years old' : 'ka tuig ang panuigon'}</span>
             </div>
           </div>
           <div class="profile-field-row mt-3">
-            <span class="profile-field-lbl">MOBILE PHONE</span>
+            <span class="profile-field-lbl">${t('profile.phone')}</span>
             <span class="profile-field-val">${escapeHTML(user.phone)}</span>
           </div>
         </div>
@@ -85,8 +87,8 @@ function renderResidentProfile(main, user) {
 
       <!-- Digital Resident Card -->
       <div class="section-header-compact mt-6">
-        <h2 class="section-title-compact">Digital Barangay ID</h2>
-        <span class="section-subtitle-compact">Tap to share resident QR</span>
+        <h2 class="section-title-compact">${t('profile.barangayIdTitle')}</h2>
+        <span class="section-subtitle-compact">${t('profile.barangayIdSub')}</span>
       </div>
       
       <div class="digital-id-card mt-2">
@@ -123,13 +125,13 @@ function renderResidentProfile(main, user) {
 
       <!-- Settings & Preferences Card -->
       <div class="card settings-card mt-5">
-        <h3 class="font-bold mb-4">Notification Preferences</h3>
+        <h3 class="font-bold mb-4">${t('profile.prefTitle')}</h3>
         
         <div class="preference-toggle-row">
           <div class="flex items-center justify-between w-full">
             <div>
-              <span class="font-semibold block" style="font-size: var(--font-size-sm);">SMS Notifications</span>
-              <span class="text-xs text-secondary">Receive real-time document status updates via SMS</span>
+              <span class="font-semibold block" style="font-size: var(--font-size-sm);">${t('profile.smsPref')}</span>
+              <span class="text-xs text-secondary">${t('profile.smsPrefSub')}</span>
             </div>
             <div class="toggle ${smsEnabled ? 'active' : ''}" id="pref-sms-toggle"></div>
           </div>
@@ -138,18 +140,19 @@ function renderResidentProfile(main, user) {
         <div class="preference-toggle-row mt-3">
           <div class="flex items-center justify-between w-full">
             <div>
-              <span class="font-semibold block" style="font-size: var(--font-size-sm);">Email Summaries</span>
-              <span class="text-xs text-secondary">Receive weekly reports of completed transactions</span>
+              <span class="font-semibold block" style="font-size: var(--font-size-sm);">${t('profile.emailPref')}</span>
+              <span class="text-xs text-secondary">${t('profile.emailPrefSub')}</span>
             </div>
             <div class="toggle ${emailEnabled ? 'active' : ''}" id="pref-email-toggle"></div>
           </div>
         </div>
 
         <div class="form-group mt-4">
-          <label class="form-label font-bold" for="pref-language">Preferred Language</label>
+          <label class="form-label font-bold" for="pref-language">${t('profile.langLabel')}</label>
           <select class="form-select mt-1" id="pref-language">
-            <option value="ceb" selected>Cebuano (Bisaya)</option>
-            <option value="en">English</option>
+            <option value="ceb" ${currentLang === 'ceb' ? 'selected' : ''}>Cebuano (Bisaya)</option>
+            <option value="en" ${currentLang === 'en' ? 'selected' : ''}>English</option>
+            <option value="tgl" ${currentLang === 'tgl' ? 'selected' : ''}>Tagalog</option>
           </select>
         </div>
       </div>
@@ -175,7 +178,7 @@ function renderOfficialProfile(main, user) {
         </div>
         <div>
           <h1 class="profile-name font-bold" style="font-size: var(--font-size-2xl);">${escapeHTML(user.name)}</h1>
-          <span class="badge badge-verified mt-1" style="background: rgba(15, 76, 129, 0.1); color: #0e3e7d;">🛡️ Verified Official</span>
+          <span class="badge badge-verified mt-1" style="background: rgba(15, 76, 129, 0.1); color: #0e3e7d;">🛡️ ${t('common.official')}</span>
         </div>
       </div>
 
@@ -201,22 +204,22 @@ function renderOfficialProfile(main, user) {
       <!-- E-Signature Section -->
       <div class="card signature-card mt-5">
         <h3 class="font-bold flex items-center gap-2 mb-2">
-          🖊️ Digital Signature Upload & Draw
+          ${t('profile.sigCardTitle')}
         </h3>
-        <p class="text-xs text-secondary mb-3">This signature will be appended to approved certificates logged in the GovChain blockchain ledger under RA 8792.</p>
+        <p class="text-xs text-secondary mb-3">${t('profile.sigCardSub')}</p>
         
         <!-- Tab Controls -->
         <div class="sig-tabs flex gap-2 mb-3">
-          <button class="filter-chip active" id="btn-sig-draw-tab">Draw Signature</button>
-          <button class="filter-chip" id="btn-sig-upload-tab">Upload Image</button>
+          <button class="filter-chip active" id="btn-sig-draw-tab">${t('profile.sigDrawTab')}</button>
+          <button class="filter-chip" id="btn-sig-upload-tab">${t('profile.sigUploadTab')}</button>
         </div>
 
         <!-- Drawing Workspace -->
         <div id="sig-draw-container" class="sig-workspace-box">
           <canvas id="sig-canvas" width="360" height="150"></canvas>
           <div class="sig-canvas-controls flex justify-end gap-2 mt-2">
-            <button class="btn btn-ghost btn-sm" id="btn-clear-sig">Clear</button>
-            <button class="btn btn-primary btn-sm" id="btn-save-sig">Save Signature</button>
+            <button class="btn btn-ghost btn-sm" id="btn-clear-sig">${t('common.clear')}</button>
+            <button class="btn btn-primary btn-sm" id="btn-save-sig">${t('common.save')}</button>
           </div>
         </div>
 
@@ -224,19 +227,19 @@ function renderOfficialProfile(main, user) {
         <div id="sig-upload-container" class="sig-workspace-box" style="display: none;">
           <div class="sig-upload-area" id="sig-dropzone">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-            <span class="text-xs text-secondary mt-2">Drag & drop or Click to upload png/jpg signature</span>
+            <span class="text-xs text-secondary mt-2">${t('profile.sigUploadPlaceholder')}</span>
             <input type="file" id="sig-file-input" accept="image/*" style="display:none;" />
           </div>
         </div>
 
         <!-- Saved Signature Preview -->
         <div class="divider mt-4"></div>
-        <h4 class="font-semibold text-xs text-secondary uppercase mb-2">Current Active Signature</h4>
+        <h4 class="font-semibold text-xs text-secondary uppercase mb-2">${t('profile.activeSigLabel')}</h4>
         <div class="saved-sig-preview-box">
           ${savedSignature ? `
             <img id="saved-sig-img" src="${savedSignature}" alt="Active Signature" />
           ` : `
-            <div class="no-sig-placeholder" id="saved-sig-placeholder">No active signature. Draw or upload one above.</div>
+            <div class="no-sig-placeholder" id="saved-sig-placeholder">${t('profile.noSigPlaceholder')}</div>
             <img id="saved-sig-img" src="" alt="Active Signature" style="display:none;" />
           `}
         </div>
@@ -268,9 +271,10 @@ function bindResidentEvents(user) {
     showToast({ type: 'success', title: 'Settings Saved', message: 'Email summary preference updated.' });
   });
 
-  // Language selection toast
+  // Language selection trigger
   document.getElementById('pref-language')?.addEventListener('change', (e) => {
-    showToast({ type: 'success', title: 'Language Changed', message: `Portal language switched to ${e.target.value === 'en' ? 'English' : 'Cebuano'}.` });
+    setLocale(e.target.value);
+    showToast({ type: 'success', title: t('common.save'), message: t('profile.langLabel') + ' updated.' });
   });
 }
 

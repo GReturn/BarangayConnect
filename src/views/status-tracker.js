@@ -10,6 +10,7 @@ import {
   generateQRCodeSVG, escapeHTML
 } from '../utils.js';
 import { showToast } from '../components/toast.js';
+import { t } from '../i18n.js';
 
 const { STORES } = store;
 
@@ -36,9 +37,9 @@ export async function renderStatusTracker(requestId) {
     main.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">📋</div>
-        <div class="empty-state-title">Wala pa'y mga hangyo</div>
-        <p class="text-sm text-secondary">Wala ka'y gihangyo nga mga dokumento sa pagkakaron.</p>
-        <button class="btn btn-primary mt-4" onclick="window.location.hash='#/request'">+ Bag-ong Hangyo</button>
+        <div class="empty-state-title">${t('status.noRequestsTitle')}</div>
+        <p class="text-sm text-secondary">${t('status.noRequestsDesc')}</p>
+        <button class="btn btn-primary mt-4" onclick="window.location.hash='#/request'">${t('status.btnNewRequest')}</button>
       </div>
     `;
     return;
@@ -51,25 +52,25 @@ export async function renderStatusTracker(requestId) {
 
   // Calculate progress percent based on status
   let progressPercent = 0;
-  let progressText = 'Giproseso pa';
+  let progressText = t('status.filterReview');
   if (activeRequest.status === 'queued_offline') {
     progressPercent = 10;
-    progressText = 'Gi-queue (Offline)';
+    progressText = t('status.stepQueued');
   } else if (activeRequest.status === 'submitted') {
     progressPercent = 25;
-    progressText = 'Gidawat na';
+    progressText = t('status.stepSubmitted');
   } else if (activeRequest.status === 'received') {
     progressPercent = 50;
-    progressText = 'Nadawat sa Sekretaryo';
+    progressText = t('status.stepReceivedSec');
   } else if (activeRequest.status === 'under_review') {
     progressPercent = 65;
-    progressText = 'Giproseso pa';
+    progressText = t('status.filterReview');
   } else if (['approved', 'ready_pickup', 'collected'].includes(activeRequest.status)) {
     progressPercent = 100;
-    progressText = 'Andam na';
+    progressText = t('status.stepReady');
   } else if (activeRequest.status === 'rejected') {
     progressPercent = 100;
-    progressText = 'Wala nadayon';
+    progressText = t('status.stepRejected');
   }
 
   // Get transaction hash from last ledger entry
@@ -119,14 +120,14 @@ export async function renderStatusTracker(requestId) {
       <!-- Top Title -->
       <div class="status-tracker-header flex items-center justify-between">
         <div>
-          <h1>Status sa Hangyo</h1>
-          <p class="text-secondary mt-1">Subaya ang dagan sa imong mga gihangyo nga serbisyo.</p>
+          <h1>${t('status.title')}</h1>
+          <p class="text-secondary mt-1">${t('status.subtitle')}</p>
         </div>
       </div>
 
       <!-- Current Processing Request Card -->
       <div class="card active-tracker-card mt-4">
-        <span class="active-tracker-label uppercase">KASALUKUYANG GINAPROSESO</span>
+        <span class="active-tracker-label uppercase">${t('status.currentProgress')}</span>
         <div class="active-tracker-row mt-2">
           <h2 class="active-tracker-title">${docType}</h2>
           <span class="badge active-tracker-status-badge status-${activeRequest.status}">${progressText}</span>
@@ -134,8 +135,8 @@ export async function renderStatusTracker(requestId) {
         
         <div class="progress-container mt-4">
           <div class="progress-header flex justify-between">
-            <span class="progress-label">Dagan sa Hangyo</span>
-            <span class="progress-percent">${progressPercent}% Natapos</span>
+            <span class="progress-label">${t('status.progressLabel')}</span>
+            <span class="progress-percent">${t('status.progressDone', { percent: progressPercent })}</span>
           </div>
           <div class="progress-bar-track mt-2">
             <div class="progress-bar-fill" style="width: ${progressPercent}%"></div>
@@ -146,26 +147,26 @@ export async function renderStatusTracker(requestId) {
         <div class="progress-steps-row mt-4">
           <div class="progress-step-item ${progressPercent >= 25 ? 'step-done' : ''}">
             <div class="progress-step-dot-small">✓</div>
-            <span class="progress-step-text">Nadawat</span>
+            <span class="progress-step-text">${t('status.stepReceived')}</span>
           </div>
           <div class="progress-step-item ${progressPercent >= 65 ? 'step-done' : progressPercent >= 50 ? 'step-active' : ''}">
             <div class="progress-step-dot-small">• • •</div>
-            <span class="progress-step-text">Gisusi</span>
+            <span class="progress-step-text">${t('status.stepReview')}</span>
           </div>
           <div class="progress-step-item ${progressPercent === 100 ? 'step-done' : ''}">
             <div class="progress-step-dot-small">⚙️</div>
-            <span class="progress-step-text">Andam na</span>
+            <span class="progress-step-text">${t('status.stepReady')}</span>
           </div>
         </div>
       </div>
 
       <!-- Detail Timeline Vertical Steps -->
       <div class="card vertical-timeline-card mt-4">
-        <h3 class="font-bold mb-4">Status sa Request</h3>
+        <h3 class="font-bold mb-4">${t('status.requestDetails')}</h3>
         
         <div class="timeline-request-details mb-4">
           <div class="timeline-detail-row">
-            <span class="detail-lbl">Document Type</span>
+            <span class="detail-lbl">${t('form.docType').replace(' *', '').split('(')[0].trim()}</span>
             <span class="detail-val font-semibold">${docType}</span>
           </div>
           <div class="timeline-detail-row mt-2">
@@ -173,7 +174,7 @@ export async function renderStatusTracker(requestId) {
             <span class="detail-val font-bold" style="font-family: monospace;">${activeRequest.referenceNumber}</span>
           </div>
           <div class="timeline-detail-row mt-2">
-            <span class="detail-lbl">Date Filed</span>
+            <span class="detail-lbl">${t('status.dateFiled')}</span>
             <span class="detail-val">${formatDateTime(activeRequest.createdAt)}</span>
           </div>
         </div>
@@ -183,8 +184,8 @@ export async function renderStatusTracker(requestId) {
           <div class="timeline-node step-completed">
             <div class="timeline-node-dot">✓</div>
             <div class="timeline-node-content">
-              <span class="timeline-node-title">Gi-submit</span>
-              <span class="timeline-node-desc">Submitted — ${formatDateTime(activeRequest.createdAt)}</span>
+              <span class="timeline-node-title">${t('status.stepSubmittedNode')}</span>
+              <span class="timeline-node-desc">${t('status.stepSubmittedNode')} — ${formatDateTime(activeRequest.createdAt)}</span>
             </div>
           </div>
 
@@ -192,8 +193,8 @@ export async function renderStatusTracker(requestId) {
           <div class="timeline-node ${progressPercent >= 50 ? 'step-completed' : 'step-pending'}">
             <div class="timeline-node-dot">${progressPercent >= 50 ? '✓' : '2'}</div>
             <div class="timeline-node-content">
-              <span class="timeline-node-title">Nadawat sa Sekretaryo</span>
-              <span class="timeline-node-desc">${progressPercent >= 50 ? 'Received by Secretary' : 'Hulat sa secretary sa pagdawat'}</span>
+              <span class="timeline-node-title">${t('status.stepReceivedSec')}</span>
+              <span class="timeline-node-desc">${progressPercent >= 50 ? 'Received by Secretary' : t('status.stepPendingSec')}</span>
             </div>
           </div>
 
@@ -201,8 +202,8 @@ export async function renderStatusTracker(requestId) {
           <div class="timeline-node ${progressPercent >= 100 ? 'step-completed' : progressPercent === 65 ? 'step-active' : 'step-pending'}">
             <div class="timeline-node-dot">${progressPercent >= 100 ? '✓' : '3'}</div>
             <div class="timeline-node-content">
-              <span class="timeline-node-title">Gi-review sa Kapitan</span>
-              <span class="timeline-node-desc">${progressPercent >= 100 ? 'Approved and Signed' : progressPercent === 65 ? 'Under Review' : 'Hulat sa review sa kapitan'}</span>
+              <span class="timeline-node-title">${t('status.stepApprovedNode')}</span>
+              <span class="timeline-node-desc">${progressPercent >= 100 ? t('status.stepApprovedDesc') : progressPercent === 65 ? t('status.stepReview') : t('status.stepPendingCap')}</span>
             </div>
           </div>
 
@@ -210,8 +211,8 @@ export async function renderStatusTracker(requestId) {
           <div class="timeline-node ${progressPercent === 100 ? 'step-completed' : 'step-pending'}">
             <div class="timeline-node-dot">📦</div>
             <div class="timeline-node-content">
-              <span class="timeline-node-title">Andam na Kuhaon</span>
-              <span class="timeline-node-desc">Ready for Pickup</span>
+              <span class="timeline-node-title">${t('status.stepReady')}</span>
+              <span class="timeline-node-desc">${t('status.stepReadyDesc')}</span>
             </div>
           </div>
         </div>
@@ -220,7 +221,7 @@ export async function renderStatusTracker(requestId) {
         ${['approved', 'ready_pickup', 'collected'].includes(activeRequest.status) ? `
           <div class="pickup-qr-container mt-4">
             <div class="pickup-qr-box">${qrCode}</div>
-            <p class="pickup-qr-text mt-2 font-bold">I-pakita kini nga QR code sa Barangay Hall aron makuha ang dokumento.</p>
+            <p class="pickup-qr-text mt-2 font-bold">${t('status.qrPrompt')}</p>
           </div>
         ` : ''}
 
@@ -231,7 +232,7 @@ export async function renderStatusTracker(requestId) {
           <div class="tamper-proof-trigger">
             <span class="font-bold flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-              Tamper-proof Record
+              ${t('status.ledgerToggle')}
             </span>
             <svg class="chevron-icon" id="ledger-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
@@ -240,7 +241,7 @@ export async function renderStatusTracker(requestId) {
               <span class="ledger-field-lbl">TRANSACTION HASH</span>
               <span class="ledger-field-val font-semibold" style="font-family: monospace; font-size: 10px; word-break: break-all;">${ledgerHash}</span>
             </div>
-            <p class="ledger-subtext mt-2">Kini nga hangyo natala sa tamper-proof ledger sa barangay alang sa integridad sa serbisyo.</p>
+            <p class="ledger-subtext mt-2">${t('status.ledgerDesc')}</p>
           </div>
         </div>
 
@@ -248,8 +249,7 @@ export async function renderStatusTracker(requestId) {
         <div class="sms-notification-toggle-row mt-4">
           <div class="flex items-center justify-between w-full">
             <div>
-              <span class="font-semibold block" style="font-size: var(--font-size-sm);">Ipahibalo ko kung andam na</span>
-              <span class="text-xs text-secondary">Notify me when ready via SMS</span>
+              <span class="font-semibold block" style="font-size: var(--font-size-sm);">${t('status.smsToggle')}</span>
             </div>
             <div class="toggle ${activeRequest.smsNotifications ? 'active' : ''}" id="sms-toggle"></div>
           </div>
@@ -258,10 +258,10 @@ export async function renderStatusTracker(requestId) {
 
       <!-- Filters Row -->
       <div class="status-filters-row mt-6">
-        <button class="filter-chip active">Tanan</button>
-        <button class="filter-chip">Gidawat na</button>
-        <button class="filter-chip">Giproseso pa</button>
-        <button class="filter-chip">Wala nadayon</button>
+        <button class="filter-chip active">${t('status.filterAll')}</button>
+        <button class="filter-chip">${t('status.filterReceived')}</button>
+        <button class="filter-chip">${t('status.filterReview')}</button>
+        <button class="filter-chip">${t('status.filterRejected')}</button>
       </div>
 
       <!-- List of Other/Mock Requests -->
@@ -281,7 +281,7 @@ export async function renderStatusTracker(requestId) {
                 <span class="badge history-badge badge-${info.color}">${info.label}</span>
               </div>
               <div class="history-action-link mt-2">
-                <span>Subaya ang status ></span>
+                <span>${t('status.historyTrackStatus')}</span>
               </div>
             </div>
           `;
@@ -306,7 +306,7 @@ export async function renderStatusTracker(requestId) {
 
         <!-- Add Request Floating / Bottom Button -->
         <button class="btn btn-ghost btn-lg w-full mt-4" id="btn-add-new-request">
-          ➕ Bag-ong Hangyo
+          ${t('status.btnNewRequest')}
         </button>
       </div>
 

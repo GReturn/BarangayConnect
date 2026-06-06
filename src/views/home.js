@@ -8,6 +8,7 @@ import offline from '../offline.js';
 import { formatTimeAgo, getStatusInfo, getDocumentTypeLabel, generateQRCodeSVG } from '../utils.js';
 import { showModal } from '../components/modal.js';
 import { showToast } from '../components/toast.js';
+import { t } from '../i18n.js';
 
 const { STORES } = store;
 
@@ -66,7 +67,7 @@ export async function renderHome() {
       ${!isOnline ? `
         <div class="home-offline-bar">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.83-2.84M8.59 16.11a6 6 0 0 1 5.68-1.4M12 20h.01"></path></svg>
-          <span>Offline — ${queuedCount} submission${queuedCount !== 1 ? 's' : ''} queued</span>
+          <span>${t('home.offlineMessage', { count: queuedCount })}</span>
         </div>
       ` : ''}
 
@@ -79,20 +80,20 @@ export async function renderHome() {
         </div>
         <div class="home-greeting">
           <span class="home-greeting-label">${greeting}!</span>
-          <h1 class="home-greeting-name">${user ? user.name : 'Residente'}</h1>
+          <h1 class="home-greeting-name">${user ? user.name : t('common.resident')}</h1>
         </div>
         ${user?.philsysVerified ? `
           <div class="home-philsys-badge">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            <span>Verified Resident</span>
+            <span>${t('home.verifiedResident')}</span>
           </div>
         ` : ''}
       </div>
 
       <!-- Section Title: Serbisyo -->
       <div class="section-header-compact">
-        <h2 class="section-title-compact">Paspas nga Serbisyo</h2>
-        <span class="section-subtitle-compact">Quick Actions</span>
+        <h2 class="section-title-compact">${t('home.quickServices')}</h2>
+        <span class="section-subtitle-compact">${t('home.quickServicesSub')}</span>
       </div>
 
       <!-- Quick Actions Grid -->
@@ -102,8 +103,8 @@ export async function renderHome() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
           </div>
           <div class="quick-action-texts">
-            <div class="quick-action-title">Hangyo og Dokumento</div>
-            <div class="quick-action-subtitle">Request Document</div>
+            <div class="quick-action-title">${t('home.reqDoc')}</div>
+            <div class="quick-action-subtitle">${t('home.reqDocSub')}</div>
           </div>
         </div>
 
@@ -112,8 +113,8 @@ export async function renderHome() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
           </div>
           <div class="quick-action-texts">
-            <div class="quick-action-title">Subaya ang Status</div>
-            <div class="quick-action-subtitle">Track Status</div>
+            <div class="quick-action-title">${t('home.trackStatus')}</div>
+            <div class="quick-action-subtitle">${t('home.trackStatusSub')}</div>
           </div>
         </div>
 
@@ -122,8 +123,8 @@ export async function renderHome() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="12" y2="16"></line></svg>
           </div>
           <div class="quick-action-texts">
-            <div class="quick-action-title">Barangay ID</div>
-            <div class="quick-action-subtitle">Digital ID Card</div>
+            <div class="quick-action-title">${t('home.brgyId')}</div>
+            <div class="quick-action-subtitle">${t('home.brgyIdSub')}</div>
           </div>
         </div>
 
@@ -132,8 +133,8 @@ export async function renderHome() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.59 16.11a6 6 0 0 1 6.82 0M12 20h.01"></path></svg>
           </div>
           <div class="quick-action-texts">
-            <div class="quick-action-title">Emergency</div>
-            <div class="quick-action-subtitle">Immediate Help</div>
+            <div class="quick-action-title">${t('home.emergency')}</div>
+            <div class="quick-action-subtitle">${t('home.emergencySub')}</div>
           </div>
         </div>
       </div>
@@ -141,8 +142,8 @@ export async function renderHome() {
       <!-- Active Requests (Feed Style) -->
       ${activeRequests.length > 0 ? `
         <div class="section-header-compact">
-          <h2 class="section-title-compact">Bag-ong Balita</h2>
-          <span class="section-subtitle-compact">Recent Updates</span>
+          <h2 class="section-title-compact">${t('home.recentUpdates')}</h2>
+          <span class="section-subtitle-compact">${t('home.recentUpdatesSub')}</span>
         </div>
         <div class="news-feed-list stagger">
           ${activeRequests.map(req => renderRequestFeedItem(req)).join('')}
@@ -151,8 +152,8 @@ export async function renderHome() {
 
       <!-- Section Title: News Bulletin -->
       <div class="section-header-compact mt-6">
-        <h2 class="section-title-compact">${isOnline ? 'Bag-ong Pahibalo' : 'Bag-ong Balita'}</h2>
-        <a href="#/sms-log" class="section-action-link">Tan-awa Tanan</a>
+        <h2 class="section-title-compact">${isOnline ? t('home.newsBulletin') : t('home.recentUpdates')}</h2>
+        <a href="#/sms-log" class="section-action-link">${t('home.viewAll')}</a>
       </div>
 
       <!-- Announcements List -->
@@ -240,7 +241,7 @@ function showBarangayIDModal(user) {
   const qrCodeSvg = generateQRCodeSVG(user.philsysId || 'BRGY-CONNECT', 120);
 
   showModal({
-    title: 'Digital Barangay ID',
+    title: t('profile.barangayIdTitle'),
     type: 'default',
     body: `
       <div class="digital-id-card">
@@ -255,15 +256,15 @@ function showBarangayIDModal(user) {
           <div class="id-card-avatar">${user.name.split(' ').map(p => p[0]).join('').substring(0, 2)}</div>
           <div class="id-card-info">
             <div class="id-card-info-item">
-              <span class="id-label">FULL NAME</span>
+              <span class="id-label">${t('form.fullName').toUpperCase()}</span>
               <span class="id-val">${user.name}</span>
             </div>
             <div class="id-card-info-item">
-              <span class="id-label">RESIDENT ID</span>
+              <span class="id-label">${t('form.residentId').toUpperCase()}</span>
               <span class="id-val" style="font-family: monospace;">${user.id.toUpperCase()}</span>
             </div>
             <div class="id-card-info-item">
-              <span class="id-label">ADDRESS</span>
+              <span class="id-label">${t('profile.address').toUpperCase()}</span>
               <span class="id-val">${user.address}</span>
             </div>
           </div>
@@ -277,7 +278,7 @@ function showBarangayIDModal(user) {
         </div>
       </div>
     `,
-    actions: [{ label: 'Close', class: 'btn-primary' }]
+    actions: [{ label: t('common.close'), class: 'btn-primary' }]
   });
 
   // Inject digital ID card CSS if not already there
@@ -384,16 +385,16 @@ function showBarangayIDModal(user) {
 
 function showEmergencyModal(user) {
   showModal({
-    title: 'Trigger Emergency SOS?',
+    title: t('sos.triggerTitle'),
     type: 'danger',
     body: `
-      <p>This action will broadcast an **Immediate Help SOS** signal to Barangay Guadalupe response units.</p>
-      <p style="margin-top: 10px; color: var(--color-error-500); font-weight: 600;">⚠️ Abuse of this system is strictly prohibited by law.</p>
+      <p>${t('sos.triggerDesc')}</p>
+      <p style="margin-top: 10px; color: var(--color-error-500); font-weight: 600;">${t('sos.abuseWarning')}</p>
     `,
     actions: [
-      { label: 'Cancel', class: 'btn-ghost' },
+      { label: t('common.cancel'), class: 'btn-ghost' },
       {
-        label: '🚨 Call SOS Help',
+        label: t('sos.triggerBtn'),
         class: 'btn-danger',
         onClick: () => {
           // Log active SOS signal
@@ -410,8 +411,8 @@ function showEmergencyModal(user) {
 
           showToast({
             type: 'error',
-            title: 'Emergency Signal Sent!',
-            message: 'Response team dispatched. Please stay where you are.',
+            title: t('sos.signalSentTitle'),
+            message: t('sos.signalSentDesc'),
             duration: 8000
           });
         }

@@ -5,6 +5,7 @@
 import store from '../store.js';
 import { getDocumentTypeLabel, getStatusInfo, formatTimeAgo, escapeHTML } from '../utils.js';
 import { showToast } from '../components/toast.js';
+import { t } from '../i18n.js';
 
 const { STORES } = store;
 
@@ -42,15 +43,15 @@ export async function renderDashboard() {
       <!-- SOS Active Emergency Notification -->
       ${unresolvedSOS.length > 0 ? `
         <div class="dashboard-emergency-banner animate-pulse" id="sos-alert-banner" style="background:#fee2e2; border: 1.5px solid #fca5a5; border-radius:var(--radius-lg); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-4); display:flex; justify-content:space-between; align-items:center; color:#991b1b; font-size:var(--font-size-sm); font-weight:600;">
-          <span class="flex items-center gap-2">🚨 <span>Distress alert active! ${unresolvedSOS.length} unresolved SOS signal(s)</span></span>
-          <button class="btn btn-danger btn-sm" id="btn-dispatch-sos">Open Dispatch Center</button>
+          <span class="flex items-center gap-2">🚨 <span>${t('dashboard.activeSosAlert', { count: unresolvedSOS.length })}</span></span>
+          <button class="btn btn-danger btn-sm" id="btn-dispatch-sos">${t('dashboard.openDispatchBtn')}</button>
         </div>
       ` : ''}
 
       <!-- Dashboard Top Banner -->
       <div class="dashboard-banner">
-        <span class="banner-org">DUMALA SA MGA HANGYO</span>
-        <h1 class="banner-title">Admin Dashboard</h1>
+        <span class="banner-org">${t('dashboard.subtitle')}</span>
+        <h1 class="banner-title">${t('dashboard.title')}</h1>
         <div class="banner-date-capsule mt-2">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
           <span>${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
@@ -61,52 +62,52 @@ export async function renderDashboard() {
       <div class="dashboard-stats-grid mt-4 stagger">
         <div class="stats-card card">
           <div class="stats-header flex justify-between">
-            <span class="stats-label">Tanan nga Hangyo</span>
+            <span class="stats-label">${t('dashboard.statTotal')}</span>
             <span class="stats-icon-box blue-sub">📊</span>
           </div>
           <div class="stats-value-row mt-2">
             <span class="stats-value">${totalRequestsCount}</span>
             <span class="stats-trend font-bold">+12%</span>
           </div>
-          <span class="stats-footer-text">Total Requests</span>
+          <span class="stats-footer-text">${t('dashboard.statTotal')}</span>
         </div>
 
         <div class="stats-card card">
           <div class="stats-header flex justify-between">
-            <span class="stats-label">Nagpaabot pa</span>
+            <span class="stats-label">${t('dashboard.statPending')}</span>
             <span class="stats-icon-box orange-sub">📋</span>
           </div>
           <div class="stats-value-row mt-2">
             <span class="stats-value">${pendingDisplayCount}</span>
             <span class="stats-trend text-danger font-bold">Urgent</span>
           </div>
-          <span class="stats-footer-text">Pending Approvals</span>
+          <span class="stats-footer-text">${t('dashboard.statPending')}</span>
         </div>
 
         <div class="stats-card card">
           <div class="stats-header flex justify-between">
-            <span class="stats-label">Naaprobahan na</span>
+            <span class="stats-label">${t('dashboard.statApproved')}</span>
             <span class="stats-icon-box green-sub">✓</span>
           </div>
           <div class="stats-value-row mt-2">
             <span class="stats-value">${approvedDisplayCount}</span>
             <span class="stats-trend text-success font-bold">Last 24h</span>
           </div>
-          <span class="stats-footer-text">Approved Today</span>
+          <span class="stats-footer-text">${t('dashboard.statApproved')}</span>
         </div>
       </div>
 
       <!-- Request Queue Header -->
       <div class="section-header-compact mt-6">
-        <h2 class="section-title-compact">Queue sa Pag-aprobar</h2>
-        <a href="#/dashboard" class="section-action-link" id="btn-view-all-queue">View All</a>
+        <h2 class="section-title-compact">${t('dashboard.queueTitle')}</h2>
+        <a href="#/dashboard" class="section-action-link" id="btn-view-all-queue">${t('home.viewAll')}</a>
       </div>
 
       <!-- Priority Toggle -->
       <div class="queue-control-row flex items-center justify-between mt-2">
-        <span class="queue-control-lbl font-semibold">REQUEST QUEUE</span>
+        <span class="queue-control-lbl font-semibold">${t('dashboard.queueTitle').toUpperCase()}</span>
         <div class="priority-toggle-wrapper flex items-center gap-2">
-          <span class="text-xs text-secondary font-medium">Priority first</span>
+          <span class="text-xs text-secondary font-medium">${t('dashboard.priorityToggle')}</span>
           <div class="toggle active" id="queue-priority-toggle"></div>
         </div>
       </div>
@@ -116,8 +117,7 @@ export async function renderDashboard() {
         ${pendingRequests.length > 0 ? pendingRequests.map(req => renderQueueCardItem(req)).join('') : `
           <div class="empty-queue-card card flex flex-col items-center justify-center py-6">
             <span style="font-size: 2rem;">✅</span>
-            <h4 class="font-bold mt-2 text-secondary">Walay pending requests</h4>
-            <p class="text-xs text-tertiary">Ang tanang requests na-process na.</p>
+            <h4 class="font-bold mt-2 text-secondary">${t('dashboard.emptyQueue')}</h4>
           </div>
         `}
       </div>
@@ -126,9 +126,9 @@ export async function renderDashboard() {
       <div class="document-insights-card card mt-4">
         <div class="insights-content-row">
           <div class="insights-texts">
-            <h4 class="insights-title">Document Insights</h4>
+            <h4 class="insights-title">${t('dashboard.insightsTitle')}</h4>
             <p class="insights-desc mt-1">Barangay clearance requests are up 24% this week. Consider adjusting processing schedules.</p>
-            <button class="btn btn-primary btn-sm mt-3" id="btn-view-insights">View Full Report</button>
+            <button class="btn btn-primary btn-sm mt-3" id="btn-view-insights">${t('dashboard.insightsBtn')}</button>
           </div>
           <div class="insights-mini-chart">
             <svg viewBox="0 0 60 40" width="60" height="40">
@@ -143,7 +143,7 @@ export async function renderDashboard() {
 
       <!-- Today's Goal Card -->
       <div class="goal-progress-card card mt-4">
-        <h4 class="goal-title uppercase font-bold text-center">TODAY'S GOAL</h4>
+        <h4 class="goal-title uppercase font-bold text-center">${t('dashboard.goalTitle')}</h4>
         <div class="goal-circle-wrapper mt-3 flex justify-center">
           <svg class="goal-ring" width="100" height="100" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="40" stroke="#f3f4f6" stroke-width="8" fill="none" />
@@ -152,16 +152,16 @@ export async function renderDashboard() {
             <text x="50" y="56" text-anchor="middle" font-weight="800" font-size="18" fill="#1f2937">85%</text>
           </svg>
         </div>
-        <p class="goal-desc mt-2 text-center font-bold">20/24 Requests Processed</p>
+        <p class="goal-desc mt-2 text-center font-bold">${t('dashboard.goalDesc', { processed: 20, total: 24 })}</p>
       </div>
 
       <!-- Quick Action: Print Barangay Report -->
       <div class="print-report-card card mt-4">
-        <span class="print-label uppercase">Quick Action</span>
-        <h3 class="print-title mt-1">Print Barangay Report</h3>
+        <span class="print-label uppercase">${t('dashboard.quickActionTitle')}</span>
+        <h3 class="print-title mt-1">${t('dashboard.printReportTitle')}</h3>
         <button class="btn btn-ghost btn-lg w-full mt-3 flex items-center justify-center gap-2" id="btn-print-report">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-          Generate Monthly PDF
+          ${t('dashboard.printReportBtn')}
         </button>
       </div>
 
@@ -169,7 +169,7 @@ export async function renderDashboard() {
       <div class="ledger-logs-section card mt-4">
         <h3 class="font-bold flex items-center gap-2">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Tamper-proof Ledger
+          ${t('dashboard.ledgerTitle')}
         </h3>
         <div class="ledger-log-timeline mt-3">
           <div class="ledger-log-node">
@@ -194,7 +194,7 @@ export async function renderDashboard() {
             </div>
           </div>
         </div>
-        <button class="btn btn-ghost btn-sm w-full mt-3" id="btn-blockchain-audit">View Full Blockchain Audit</button>
+        <button class="btn btn-ghost btn-sm w-full mt-3" id="btn-blockchain-audit">${t('dashboard.blockchainAuditBtn')}</button>
       </div>
 
       <!-- GovChain Footer -->
@@ -248,13 +248,13 @@ function renderQueueCardItem(req) {
   const initials = req.residentName.split(' ').map(p => p[0]).join('').substring(0, 2);
 
   // SLA Warnings
-  let timeLimit = 'Response required within 6h';
+  let timeLimit = t('dashboard.slaLimit');
   let isEscalated = false;
   if (req.isPriority) {
-    timeLimit = 'Escalates to Vice-Captain in 2h 14m';
+    timeLimit = t('dashboard.slaPriorityEscalate');
     isEscalated = true;
   } else if (req.id.endsWith('2') || req.id.endsWith('4')) {
-    timeLimit = 'Escalates to Vice-Captain in 4h 00m';
+    timeLimit = t('dashboard.slaEscalate');
     isEscalated = true;
   }
 
@@ -263,7 +263,7 @@ function renderQueueCardItem(req) {
       <div class="queue-item-header flex items-center justify-between">
         <div class="flex items-center gap-2">
           ${req.isPriority ? '<span class="badge badge-priority-card">PRIORITY</span>' : ''}
-          ${req.isPriority ? '<span class="badge badge-sector-card">SENIOR CITIZEN</span>' : '<span class="badge badge-pending-card">PENDING</span>'}
+          ${req.isPriority ? `<span class="badge badge-sector-card">${t('form.seniorFlag').toUpperCase().split('(')[0].trim()}</span>` : `<span class="badge badge-pending-card">${t('dashboard.statPending').toUpperCase()}</span>`}
         </div>
         <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </div>
@@ -281,7 +281,7 @@ function renderQueueCardItem(req) {
       <div class="queue-item-meta mt-3">
         ${req.isPriority ? `
           <div class="queue-priority-reason">
-            ✓ Auto-prioritized — Senior Citizen (60+)
+            ✓ ${t('dashboard.seniorPriorityReason')}
           </div>
         ` : ''}
         <div class="queue-sla-alert ${isEscalated ? 'alert-danger' : 'alert-info'} mt-1">

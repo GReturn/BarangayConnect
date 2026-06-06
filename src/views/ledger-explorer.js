@@ -6,6 +6,7 @@ import store from '../store.js';
 import ledger from '../ledger.js';
 import { formatDateTimeUTC, escapeHTML } from '../utils.js';
 import { showToast } from '../components/toast.js';
+import { t } from '../i18n.js';
 
 const { STORES } = store;
 
@@ -21,22 +22,22 @@ export async function renderLedgerExplorer() {
     <div class="ledger-explorer-view animate-fade-in">
       <div class="form-back-row">
         <button class="btn btn-ghost btn-sm" id="ledger-back-btn">
-          ← Back to Dashboard
+          ← ${t('common.back')}
         </button>
       </div>
 
       <div class="ledger-header">
-        <h1>🛡️ Tamper-Proof Ledger Explorer</h1>
-        <p class="text-secondary mt-1">Audit log of all transactions secured by GovChain cryptographic chains.</p>
+        <h1>${t('ledger.title')}</h1>
+        <p class="text-secondary mt-1">${t('ledger.subtitle')}</p>
       </div>
 
       <!-- Chain Verification Action Box -->
       <div class="card integrity-verification-card mt-5 flex justify-between items-center gap-4">
         <div>
-          <h3 class="font-bold text-sm">System Chain Integrity</h3>
-          <p class="text-xs text-secondary mt-1">Verify that no historical records have been altered or deleted.</p>
+          <h3 class="font-bold text-sm">${t('ledger.integrityTitle')}</h3>
+          <p class="text-xs text-secondary mt-1">${t('ledger.integritySub')}</p>
         </div>
-        <button class="btn btn-primary" id="btn-run-checksum">Verify Chain Checksum</button>
+        <button class="btn btn-primary" id="btn-run-checksum">${t('ledger.verifyBtn')}</button>
       </div>
 
       <!-- Checksum Results Box (injected dynamically) -->
@@ -44,7 +45,7 @@ export async function renderLedgerExplorer() {
 
       <!-- Search / Filters Row -->
       <div class="ledger-filters-row mt-6 flex gap-3">
-        <input type="text" class="form-input flex-1" id="ledger-search-input" placeholder="Search by Actor, Request ID, or Hash..." />
+        <input type="text" class="form-input flex-1" id="ledger-search-input" placeholder="${t('ledger.searchPlaceholder')}" />
       </div>
 
       <!-- Blocks Feed Timeline -->
@@ -64,8 +65,8 @@ function renderBlockCards(entries) {
     return `
       <div class="empty-state card py-6">
         <span style="font-size: 2rem;">📭</span>
-        <h4 class="font-bold mt-2 text-secondary">Ledger is empty</h4>
-        <p class="text-xs text-tertiary">No transaction records written to database.</p>
+        <h4 class="font-bold mt-2 text-secondary">${t('ledger.ledgerEmpty')}</h4>
+        <p class="text-xs text-tertiary">${t('ledger.noRecords')}</p>
       </div>
     `;
   }
@@ -79,32 +80,32 @@ function renderBlockCards(entries) {
       <div class="ledger-block-card card mt-3" data-block-id="${entry.id}">
         <div class="block-card-header flex justify-between items-center">
           <div class="flex items-center gap-2">
-            <span class="block-index-badge">BLOCK #${blockIndex}</span>
-            <span class="badge badge-success text-xs">✓ Cryptographically Secured</span>
+            <span class="block-index-badge">${t('ledger.blockHeader', { index: blockIndex })}</span>
+            <span class="badge badge-success text-xs">${t('ledger.blockSecured')}</span>
           </div>
           <span class="block-time text-xs text-tertiary font-semibold">${dateFormatted}</span>
         </div>
 
         <div class="block-card-body mt-3">
           <div class="block-field-row">
-            <span class="block-field-lbl">ACTION</span>
+            <span class="block-field-lbl">${t('review.auditAction')}</span>
             <span class="block-field-val font-bold text-gray-900">${actionLabel}</span>
           </div>
           
           <div class="block-fields-inline mt-3">
             <div class="block-field-row">
-              <span class="block-field-lbl">ACTOR</span>
+              <span class="block-field-lbl">${t('review.auditActor')}</span>
               <span class="block-field-val font-semibold">${escapeHTML(entry.actor)}</span>
             </div>
             <div class="block-field-row">
-              <span class="block-field-lbl">REQUEST REFERENCE</span>
+              <span class="block-field-lbl">${t('ledger.requestRef')}</span>
               <span class="block-field-val font-semibold" style="font-family: monospace;">${escapeHTML(entry.data?.referenceNumber || entry.requestId)}</span>
             </div>
           </div>
 
           ${entry.remarks ? `
             <div class="block-field-row mt-3">
-              <span class="block-field-lbl">REMARKS / MEMO</span>
+              <span class="block-field-lbl">${t('ledger.remarksMemo')}</span>
               <span class="block-field-val font-italic">"${escapeHTML(entry.remarks)}"</span>
             </div>
           ` : ''}
@@ -135,7 +136,7 @@ function bindLedgerEvents(entries) {
   document.getElementById('btn-run-checksum')?.addEventListener('click', async () => {
     const verifyBtn = document.getElementById('btn-run-checksum');
     verifyBtn.disabled = true;
-    verifyBtn.innerHTML = '<span class="spinner"></span> Verifying...';
+    verifyBtn.innerHTML = `<span class="spinner"></span> ${t('common.loading')}`;
 
     // Simulate cryptographic processing time of 800ms
     setTimeout(async () => {
@@ -143,7 +144,7 @@ function bindLedgerEvents(entries) {
       const resultsBox = document.getElementById('checksum-results-box');
 
       verifyBtn.disabled = false;
-      verifyBtn.innerHTML = 'Verify Chain Checksum';
+      verifyBtn.innerHTML = t('ledger.verifyBtn');
 
       if (resultsBox) {
         if (result.valid) {
@@ -151,8 +152,8 @@ function bindLedgerEvents(entries) {
             <div class="card alert-box-success flex items-center gap-3">
               <div class="alert-icon-circle-success">✓</div>
               <div>
-                <h4 class="font-bold text-sm text-green-900">Ledger Validation Passed</h4>
-                <p class="text-xs text-green-700 mt-1">Verified ${result.count} transaction blocks. Hash link sequences match parent records successfully.</p>
+                <h4 class="font-bold text-sm text-green-900">${t('ledger.verificationSuccess').split('.')[0]}</h4>
+                <p class="text-xs text-green-700 mt-1">${t('ledger.verificationSuccess', { count: result.count })}</p>
               </div>
             </div>
           `;
@@ -162,8 +163,8 @@ function bindLedgerEvents(entries) {
             <div class="card alert-box-danger flex items-center gap-3">
               <div class="alert-icon-circle-danger">❌</div>
               <div>
-                <h4 class="font-bold text-sm text-red-900">Ledger Validation Failed</h4>
-                <p class="text-xs text-red-700 mt-1">Chain broken at block index ${result.brokenAt}. Hash discrepancy detected.</p>
+                <h4 class="font-bold text-sm text-red-900">${t('ledger.verificationFailed').split('.')[0]}</h4>
+                <p class="text-xs text-red-700 mt-1">${t('ledger.verificationFailed', { index: result.brokenAt })}</p>
               </div>
             </div>
           `;

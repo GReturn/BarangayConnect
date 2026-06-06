@@ -4,6 +4,7 @@
 
 import { formatTimeAgo, escapeHTML } from '../utils.js';
 import { showToast } from '../components/toast.js';
+import { t } from '../i18n.js';
 
 export async function renderSOSDispatch() {
   const main = document.getElementById('main-content');
@@ -43,13 +44,13 @@ export async function renderSOSDispatch() {
     <div class="sos-dispatch-view animate-fade-in">
       <div class="form-back-row">
         <button class="btn btn-ghost btn-sm" id="sos-back-btn">
-          ← Back to Dashboard
+          ← ${t('common.back')}
         </button>
       </div>
 
       <div class="sos-header">
-        <h1>🚨 SOS Emergency Dispatch</h1>
-        <p class="text-secondary mt-1">Live response management console for Barangay Guadalupe units.</p>
+        <h1>${t('sos.title')}</h1>
+        <p class="text-secondary mt-1">${t('sos.subtitle')}</p>
       </div>
 
       <!-- Main Layout: Sidebar List + Map View -->
@@ -58,9 +59,9 @@ export async function renderSOSDispatch() {
         <!-- Left Column: Active Alarms List -->
         <div class="sos-alarms-panel">
           <h3 class="font-bold flex items-center justify-between mb-3">
-            Active Alarms
+            ${t('sos.activeAlarms')}
             <span class="badge ${unresolved.length > 0 ? 'badge-danger animate-pulse' : 'badge-neutral'}">
-              ${unresolved.length} Unresolved
+              ${t('sos.unresolvedBadge', { count: unresolved.length })}
             </span>
           </h3>
 
@@ -90,15 +91,15 @@ export async function renderSOSDispatch() {
                     
                     <div class="alarm-actions flex gap-2">
                       <a href="tel:${alert.residentPhone}" class="btn btn-ghost btn-sm flex items-center justify-center" title="Call Resident">
-                        📞 Call
+                        ${t('sos.callBtn')}
                       </a>
                       ${!isDispatched ? `
                         <button class="btn btn-warning btn-sm btn-dispatch" data-sos-id="${alert.id}">
-                          🚓 Dispatch
+                          ${t('sos.dispatchBtn')}
                         </button>
                       ` : ''}
                       <button class="btn btn-success btn-sm btn-resolve" data-sos-id="${alert.id}">
-                        ✓ Resolve
+                        ${t('sos.resolveBtn')}
                       </button>
                     </div>
                   </div>
@@ -107,8 +108,7 @@ export async function renderSOSDispatch() {
             }).join('') : `
               <div class="empty-state py-6 card">
                 <span style="font-size: 2rem;">🛡️</span>
-                <h4 class="font-bold mt-2 text-secondary">All clear. No active SOS signals.</h4>
-                <p class="text-xs text-tertiary">Live emergency broadcasts will appear here.</p>
+                <h4 class="font-bold mt-2 text-secondary">${t('sos.emptySOS')}</h4>
               </div>
             `}
           </div>
@@ -116,7 +116,7 @@ export async function renderSOSDispatch() {
           <!-- Historical Resolved Logs -->
           ${resolved.length > 0 ? `
             <div class="divider mt-5"></div>
-            <h3 class="font-bold text-xs text-secondary uppercase mb-3">Recently Resolved</h3>
+            <h3 class="font-bold text-xs text-secondary uppercase mb-3">${t('sos.recentlyResolved')}</h3>
             <div class="resolved-logs-list flex flex-col gap-2">
               ${resolved.map(alert => `
                 <div class="resolved-log-item card flex justify-between items-center py-2 px-3">
@@ -188,8 +188,8 @@ function bindSOSEvents() {
       updateSOSStatus(sosId, 'dispatched');
       showToast({
         type: 'success',
-        title: 'Emergency Dispatched',
-        message: 'Guadalupe Response Unit 2 route initialized.'
+        title: t('sos.dispatchSuccessTitle'),
+        message: t('sos.dispatchSuccessDesc')
       });
       renderSOSDispatch();
     });
@@ -203,8 +203,8 @@ function bindSOSEvents() {
       updateSOSStatus(sosId, 'resolved');
       showToast({
         type: 'success',
-        title: 'SOS Resolved',
-        message: 'Emergency alarm marked as clear.'
+        title: t('sos.resolveSuccessTitle'),
+        message: t('sos.resolveSuccessDesc')
       });
       renderSOSDispatch();
     });

@@ -47,6 +47,12 @@ async function init() {
     initRouter();
     console.log('[BarangayConnect] Router started');
 
+    // Hot-reload views on language changes
+    window.addEventListener('brgyconnect_locale_changed', () => {
+      renderNavbar();
+      window.dispatchEvent(new Event('hashchange'));
+    });
+
     console.log('[BarangayConnect] ✅ App ready!');
   } catch (error) {
     console.error('[BarangayConnect] Init error:', error);

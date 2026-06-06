@@ -3,6 +3,7 @@
    ============================================ */
 
 import auth from '../auth.js';
+import { t } from '../i18n.js';
 
 export function renderNavbar() {
   const root = document.getElementById('navbar-root');
@@ -34,7 +35,7 @@ export function renderNavbar() {
 
         <div class="navbar-center">
           <span class="navbar-title-text">
-            ${isOfficialUser ? 'Official Portal' : 'BarangayConnect'}
+            ${isOfficialUser ? t('navbar.titleOfficial') : t('navbar.titleResident')}
           </span>
         </div>
 
@@ -57,37 +58,37 @@ export function renderNavbar() {
         <!-- Official Bottom Nav -->
         <a href="#/dashboard" class="bottom-nav-tab" id="tab-official-home">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span class="bottom-nav-label">Home</span>
+          <span class="bottom-nav-label">${t('navbar.officialHome')}</span>
         </a>
         <a href="#/dashboard" class="bottom-nav-tab" id="tab-official-requests">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          <span class="bottom-nav-label">Requests</span>
+          <span class="bottom-nav-label">${t('navbar.officialRequests')}</span>
         </a>
         <a href="#/sms-log" class="bottom-nav-tab" id="tab-official-logs">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-          <span class="bottom-nav-label">Logs</span>
+          <span class="bottom-nav-label">${t('navbar.officialLogs')}</span>
         </a>
         <a href="#/profile" class="bottom-nav-tab" id="tab-official-profile">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <span class="bottom-nav-label">Profile</span>
+          <span class="bottom-nav-label">${t('navbar.officialProfile')}</span>
         </a>
       ` : `
         <!-- Resident Bottom Nav -->
         <a href="#/" class="bottom-nav-tab" id="tab-resident-home">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span class="bottom-nav-label">Balay / Home</span>
+          <span class="bottom-nav-label">${t('navbar.home')}</span>
         </a>
         <a href="#/request" class="bottom-nav-tab" id="tab-resident-requests">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          <span class="bottom-nav-label">Mga Hangyo</span>
+          <span class="bottom-nav-label">${t('navbar.requests')}</span>
         </a>
         <a href="#/sms-log" class="bottom-nav-tab" id="tab-resident-bulletin">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M12 9v4"></path><path d="M12 16v.01"></path></svg>
-          <span class="bottom-nav-label">Pahibalo</span>
+          <span class="bottom-nav-label">${t('navbar.bulletin')}</span>
         </a>
         <a href="#/profile" class="bottom-nav-tab" id="tab-resident-profile">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <span class="bottom-nav-label">Akawnt</span>
+          <span class="bottom-nav-label">${t('navbar.account')}</span>
         </a>
       `}
     </div>
@@ -160,7 +161,7 @@ async function loadUserList() {
       <div class="avatar" style="width: 28px; height: 28px; font-size: 0.7rem;">${u.name.split(' ').map(p => p[0]).join('').substring(0, 2)}</div>
       <div>
         <div style="font-weight: 500; font-size: 0.8125rem; color: #111827;">${u.name}</div>
-        <div style="font-size: 0.6875rem; color: var(--text-tertiary);">${u.role === 'official' ? u.officialTitle || 'Official' : 'Resident'}${u.isSenior ? ' • Senior' : ''}</div>
+        <div style="font-size: 0.6875rem; color: var(--text-tertiary);">${u.role === 'official' ? u.officialTitle || t('common.official') : t('common.resident')}${u.isSenior ? ' • Senior' : ''}</div>
       </div>
       ${u.id === currentUser?.id ? '<span style="margin-left: auto; color: var(--color-accent-500); font-size: 0.75rem;">●</span>' : ''}
     </button>
