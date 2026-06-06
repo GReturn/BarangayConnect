@@ -31,7 +31,13 @@ const translations = {
       officialLogs: 'Mga Log',
       officialProfile: 'Profile',
       titleResident: 'BarangayConnect',
-      titleOfficial: 'Opisyal nga Portal'
+      titleOfficial: 'Opisyal nga Portal',
+      ledgerExplorer: 'Ledger Explorer',
+      sosDispatch: 'SOS Response',
+      insights: 'Insights & Ulat',
+      switchLanguage: 'Pilia ang Pinulongan',
+      activeProfile: 'Aktibo nga Profile',
+      switchProfile: 'Balhin og Akawnt'
     },
     home: {
       quickServices: 'Paspas nga Serbisyo',
@@ -285,7 +291,13 @@ const translations = {
       officialLogs: 'Logs',
       officialProfile: 'Profile',
       titleResident: 'BarangayConnect',
-      titleOfficial: 'Official Portal'
+      titleOfficial: 'Official Portal',
+      ledgerExplorer: 'Ledger Explorer',
+      sosDispatch: 'SOS Response',
+      insights: 'Insights & Reports',
+      switchLanguage: 'Switch Language',
+      activeProfile: 'Active Profile',
+      switchProfile: 'Switch Account'
     },
     home: {
       quickServices: 'Quick Services',
@@ -539,7 +551,13 @@ const translations = {
       officialLogs: 'Mga Log',
       officialProfile: 'Profile',
       titleResident: 'BarangayConnect',
-      titleOfficial: 'Opisyal na Portal'
+      titleOfficial: 'Opisyal na Portal',
+      ledgerExplorer: 'Ledger Explorer',
+      sosDispatch: 'SOS Response',
+      insights: 'Insights at Ulat',
+      switchLanguage: 'Palitan ang Wika',
+      activeProfile: 'Aktibong Profile',
+      switchProfile: 'Lumipat ng Account'
     },
     home: {
       quickServices: 'Mabilisang Serbisyo',
