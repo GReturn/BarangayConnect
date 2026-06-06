@@ -207,9 +207,10 @@ function addLedgerExplorerStyles() {
     }
 
     .integrity-verification-card {
-      background: rgba(15, 76, 129, 0.05);
-      border: 1.5px dashed #0f4c81;
+      background: linear-gradient(135deg, rgba(15, 76, 129, 0.05) 0%, rgba(30, 64, 175, 0.05) 100%);
+      border: 1.5px dashed var(--border-accent);
       padding: var(--space-4);
+      box-shadow: var(--shadow-sm);
     }
 
     .block-index-badge {
@@ -219,6 +220,18 @@ function addLedgerExplorerStyles() {
       font-weight: 800;
       padding: 3px 8px;
       border-radius: var(--radius-sm);
+    }
+
+    .ledger-block-card {
+      background: #ffffff;
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .ledger-block-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
 
     .block-fields-inline {
@@ -272,6 +285,8 @@ function addLedgerExplorerStyles() {
       background: #f0fdf4;
       border: 1.5px solid #bbf7d0;
       padding: var(--space-3) var(--space-4);
+      box-shadow: var(--shadow-sm);
+      border-radius: var(--radius-md);
     }
 
     .alert-icon-circle-success {
@@ -291,6 +306,8 @@ function addLedgerExplorerStyles() {
       background: #fef2f2;
       border: 1.5px solid #fecaca;
       padding: var(--space-3) var(--space-4);
+      box-shadow: var(--shadow-sm);
+      border-radius: var(--radius-md);
     }
 
     .alert-icon-circle-danger {

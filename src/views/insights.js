@@ -142,6 +142,13 @@ function addInsightsStyles() {
       background: #ffffff;
       padding: var(--space-4);
       border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .insights-stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
 
     .stat-lbl {
@@ -165,6 +172,13 @@ function addInsightsStyles() {
       background: #ffffff;
       padding: var(--space-5);
       border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
 
     .chart-row-bar-track {

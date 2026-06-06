@@ -263,15 +263,23 @@ function addSOSDispatchStyles() {
       background: #ffffff;
       border: 1px solid var(--border-default);
       padding: var(--space-4);
-      transition: all 0.2s;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .sos-alarm-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
 
     .sos-alarm-card.border-pending {
       border-left: 4px solid #ef4444;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.05);
     }
 
     .sos-alarm-card.border-dispatched {
       border-left: 4px solid #f59e0b;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.05);
     }
 
     .alarm-caller {
@@ -303,11 +311,12 @@ function addSOSDispatchStyles() {
       padding: 0;
       overflow: hidden;
       border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-lg);
     }
 
     .map-mock-bg {
       height: 480px;
-      background: #111827; /* Dark satellite theme */
+      background: linear-gradient(180deg, #0b0f19 0%, #111827 100%); /* Premium dark GPS center */
       position: relative;
       overflow: hidden;
     }
@@ -316,10 +325,10 @@ function addSOSDispatchStyles() {
       position: absolute;
       inset: 0;
       background-image: 
-        radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0),
-        linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 0),
-        linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 0);
-      background-size: 8px 8px, 40px 40px, 40px 40px;
+        radial-gradient(rgba(59, 130, 246, 0.1) 1.5px, transparent 0),
+        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 0),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 0);
+      background-size: 16px 16px, 80px 80px, 80px 80px;
     }
 
     .map-pin-pulse {
@@ -328,18 +337,18 @@ function addSOSDispatchStyles() {
       height: 24px;
       cursor: pointer;
       z-index: 10;
-      transition: transform 0.2s;
+      transition: transform 0.25s var(--ease-spring);
     }
 
     .map-pin-pulse.highlight {
-      transform: scale(1.4);
+      transform: scale(1.5);
       z-index: 20;
     }
 
     .pin-marker {
-      font-size: 20px;
-      text-shadow: 0 0 6px rgba(0,0,0,0.8);
-      animation: bounce 1s infinite alternate;
+      font-size: 22px;
+      text-shadow: 0 0 8px rgba(0,0,0,0.9);
+      animation: bounce 0.8s infinite alternate;
     }
 
     .map-pin-pulse::after {
@@ -357,12 +366,12 @@ function addSOSDispatchStyles() {
 
     .map-pin-pulse.pin-pending::after {
       border: 2px solid #ef4444;
-      background: rgba(239, 68, 68, 0.15);
+      background: rgba(239, 68, 68, 0.25);
     }
 
     .map-pin-pulse.pin-dispatched::after {
       border: 2px solid #f59e0b;
-      background: rgba(245, 158, 11, 0.15);
+      background: rgba(245, 158, 11, 0.25);
       animation-delay: 0.8s;
     }
 
@@ -380,7 +389,7 @@ function addSOSDispatchStyles() {
       white-space: nowrap;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
       opacity: 0;
       visibility: hidden;
       transition: all 0.2s;
@@ -390,36 +399,36 @@ function addSOSDispatchStyles() {
     .map-pin-pulse.highlight .pin-popup {
       opacity: 1;
       visibility: visible;
-      bottom: 34px;
+      bottom: 36px;
     }
 
     .pin-popup strong {
       font-weight: 700;
-      color: #ef4444;
+      color: #f87171;
     }
 
     .map-legend {
       position: absolute;
       bottom: var(--space-3);
       right: var(--space-3);
-      background: rgba(17, 24, 39, 0.85);
+      background: rgba(17, 24, 39, 0.9);
       padding: 4px var(--space-3);
       border-radius: var(--radius-sm);
       font-size: 8px;
-      color: #9ca3af;
+      color: #cbd5e1;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       border: 1px solid #374151;
     }
 
     @keyframes bounce {
       from { transform: translateY(0); }
-      to { transform: translateY(-6px); }
+      to { transform: translateY(-8px); }
     }
 
     @keyframes ripple {
       from { transform: scale(0.2); opacity: 1; }
-      to { transform: scale(1.8); opacity: 0; }
+      to { transform: scale(2.2); opacity: 0; }
     }
   `;
   document.head.appendChild(style);

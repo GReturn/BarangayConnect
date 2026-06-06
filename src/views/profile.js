@@ -460,11 +460,25 @@ function addProfileStyles() {
     }
 
     .philsys-id-details-card {
-      border-left: 3px solid #0f4c81;
+      border-left: 4px solid var(--border-accent);
+      background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s;
+    }
+    
+    .philsys-id-details-card:hover {
+      transform: translateY(-2px);
     }
 
     .official-details-card {
-      border-left: 3px solid #10b981;
+      border-left: 4px solid #10b981;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s;
+    }
+
+    .official-details-card:hover {
+      transform: translateY(-2px);
     }
 
     .preference-toggle-row {
@@ -472,23 +486,153 @@ function addProfileStyles() {
       border: 1px solid var(--border-default);
       border-radius: var(--radius-md);
       padding: var(--space-3);
+      transition: background 0.2s;
+    }
+
+    .preference-toggle-row:hover {
+      background: #f3f4f6;
+    }
+
+    /* Digital ID Card Premium styling */
+    .digital-id-card {
+      background: linear-gradient(135deg, #0e3e7d 0%, #1e40af 100%);
+      color: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .digital-id-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .digital-id-card:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 12px 24px rgba(15, 76, 129, 0.25);
+    }
+
+    .id-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: var(--space-2);
+    }
+
+    .id-card-logo {
+      font-size: 20px;
+    }
+
+    .id-card-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .id-card-title-main {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .id-card-title-sub {
+      font-size: 9px;
+      opacity: 0.7;
+    }
+
+    .id-card-body {
+      display: flex;
+      gap: var(--space-4);
+      align-items: center;
+    }
+
+    .id-card-avatar {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .id-card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .id-card-info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .id-label {
+      font-size: 8px;
+      opacity: 0.6;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .id-val {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+    }
+
+    .id-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: var(--space-3);
+    }
+
+    .id-card-ver {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .id-ver-text {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .id-card-qr svg {
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      background: #0f1b2d !important;
     }
 
     /* Signature canvas and uploads */
     .sig-workspace-box {
-      background: #f9fafb;
-      border: 1.5px solid var(--border-default);
+      background: #ffffff;
+      border: 1px solid var(--border-default);
       border-radius: var(--radius-lg);
       padding: var(--space-3);
+      box-shadow: var(--shadow-sm);
     }
 
     #sig-canvas {
       background: #ffffff;
-      border: 1px solid var(--border-strong);
+      border: 1.5px solid var(--border-strong);
       border-radius: var(--radius-md);
       display: block;
       width: 100%;
       cursor: crosshair;
+      transition: border-color 0.2s;
+    }
+
+    #sig-canvas:focus {
+      border-color: var(--border-accent);
     }
 
     .sig-upload-area {
@@ -502,16 +646,17 @@ function addProfileStyles() {
       justify-content: center;
       cursor: pointer;
       text-align: center;
-      transition: background 0.2s;
+      transition: all 0.2s;
     }
 
     .sig-upload-area:hover {
-      background: #f3f4f6;
+      background: var(--bg-surface-hover);
       border-color: #0f4c81;
+      transform: scale(1.005);
     }
 
     .saved-sig-preview-box {
-      border: 1.5px solid var(--border-default);
+      border: 1px solid var(--border-default);
       background: #ffffff;
       border-radius: var(--radius-md);
       padding: var(--space-3);
@@ -519,6 +664,7 @@ function addProfileStyles() {
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--shadow-sm);
     }
 
     .saved-sig-preview-box img {
